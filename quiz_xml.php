@@ -323,11 +323,10 @@ $xmlfile9.="</questions>
 }
 if(count($poolquestions)>0)
 {
-for($n=0;$n<count($poolquestions); $n++)
+for($j=0;$j<count($poolquestions); $j++)
 {
-	$j++;
-$quid=$poolquestions[$n]->getId();
-$grade=$poolquestions[$n]->getDefaultmark();
+$quid=$poolquestions[$j]->getId();
+$grade=$poolquestions[$j]->getDefaultmark();
 $xmlfile9.="<question_instance id=\"" . $j . "\">
 		<question>" . $quid . "</question>
 		<grade>" . $grade . "</grade>

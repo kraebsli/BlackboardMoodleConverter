@@ -19,7 +19,6 @@
 <p>Target: Moodle 3.1.1</p>
 <p>Converted are documents, content from text elements, links, YouTube mashups and tests.</p>
 <p>All question types are converted except for: Calculated Formula, Quiz Bowl.</p>
-<p>Details for the question types (in German): <a href="fragetypen.pdf">Question types - PDF</a></p>
 <p>In Blackboard:<br>Control Panel -> Packages and Utilities -> Export/Archive Course -> Export Package</p>
 
 
