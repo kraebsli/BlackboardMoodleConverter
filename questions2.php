@@ -13,6 +13,7 @@ foreach ($daten->resources->resource as $res) {
 	{
 	if(isset($test['title'])&& $test['title']!=="")
 	{
+		
 		$quiz2=xmlencoding($test['title']);
 		$quiz2_demo=xmlencoding($test['title']);
 		//***************************************************************
@@ -37,8 +38,9 @@ foreach ($daten->resources->resource as $res) {
 		//section->section->selection_ordering->selection->or_selection->selection_metadata
 		//section->section->selection_ordering->selection
 		$seltype=$test->section->section->selection_ordering->selection;
-		if(isset($seltype))
-		{
+$seltype=trim($seltype['seltype']);
+if($seltype!=="All")
+{
 			$quiz_p= new quiz($quiz2,$quizid,$contextid, $categoryid, $gesamtscore, $quizdescription);
 			$categoryid++;
 			$quiz2="";
@@ -50,13 +52,13 @@ foreach ($daten->resources->resource as $res) {
 			$multianswerid=0;
 			$scorevalue="0";
 		$seltype=trim($seltype['seltype']);
-		if($seltype!=="All" || $seltype!=="")
+		/*if($seltype!=="All" || $seltype!=="")
 		{
 			
 			
 		//echo $test['title'] . "enthaelt unsymmetrisches Verhaeltnis von Zahl der Fragen zu Anzahl anzuzeigener Fragen im Fragensatz.";
 		
-		}
+		}*/
 	//***********************************************************
 	foreach ($test->section->section->selection_ordering->selection->or_selection->selection_metadata as $s) {
 //$s2=$s->selection_ordering->selection->or_selection->selection_metadata;
