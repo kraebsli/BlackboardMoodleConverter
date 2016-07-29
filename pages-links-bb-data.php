@@ -15,7 +15,7 @@ foreach ($daten->resources->resource as $res) {
 	
 	if($contenthandler=="resource/x-bb-document")
 	{
-
+$arr_all=array();//for page activity
 		$arrmitembeddedfiles=array();
 		$bild=array();
 		$pageid=$res_single['id'];
@@ -31,7 +31,7 @@ foreach ($daten->resources->resource as $res) {
 		$pagetext=trim($pagetext);
 		//echo "**************************************************";
 		//echo "<br>";
-		if(strlen($pagetext)>300)
+		if(strlen($pagetext)>500)
 		{
 		$mod_label=false;
 		$bild=bild($pagetext, $dir, $pageid, $resident, $direxport, $mod_label);//array mit img-infos
@@ -44,6 +44,7 @@ foreach ($daten->resources->resource as $res) {
 			$bild=bild($pagetext, $dir, $pageid, $resident, $direxport, $mod_label);
 		
 		}
+		//************************************************************************************
 		if(count($bild)>0)//nur wenn eingebettete Dateien vorhanden sind
 		{
 			$pagetext=$bild[1];
@@ -60,17 +61,19 @@ foreach ($daten->resources->resource as $res) {
 			if($mod_label==false)
 				{
 				$arr_files_embedded[]=$arrmitembeddedfiles[$i];
+				$arr_all[]=$arrmitembeddedfiles[$i];
 			}
 				else
 				{
-					
+				$arr_all[]=$arrmitembeddedfiles[$i];
 				$arr_files_embedded_label[]=$arrmitembeddedfiles[$i];
 	}
 
 
 	}//if
 	}//for
-	//**********************************************FILES
+	//**********************************************only FILES**************************************
+	//**********************************************************************************************
 	foreach($res_single->FILES->FILE as $pfile)
 	{
 
@@ -120,7 +123,7 @@ $arrmitembeddedfiles2=array();
 	else
 	{
 		$textlabel=$pagetitle . ": Datei konnte nicht wiederhergestellt werden.";
-				$topitemid1="";
+		$topitemid1="";
 		$arrmitembeddedfiles2=array();
 		$textlabel=xmlencoding($textlabel);
 		$labelitem= new label ($labelid, "Info", $textlabel,  $section, $arrmitembeddedfiles2, $topitemid1);
@@ -139,12 +142,12 @@ $arrmitembeddedfiles2=array();
 		//*****************************************************
 
 	}//************FILES
-	//***********************************
+	//**********************************************************************************************
+	//**********************************************************************************************
+	//pagetext with files not images*****************************************************************
 	if(isset($pagetext) && $pagetext!=="")
 	{
 		
-		//function internerlink($t, $pid, $res, $s, $dir)
-		//$textbeifolder2=internerlink2($textbeifolder, $parentid, $topitemref1, $sectionzaehler,$dir);
 		$pagetext2=internerlink($pagetext, $parentid, $resident, $section, $dir);
 		
 		$arrmitembeddedfiles=array();
@@ -163,6 +166,7 @@ $arrmitembeddedfiles2=array();
 						for($i=0;$i<count($pagetext2[3]); $i++)
 						{
 						$arr_files[]=$arrmitembeddedfiles[$i];
+						$arr_all[]=$arrmitembeddedfiles[$i];
 						
 						$f->setFiles($arrmitembeddedfiles[$i]);//dem Folder wird das File zugeordnet
 						}
@@ -172,14 +176,14 @@ $arrmitembeddedfiles2=array();
 		if($mod_label==false)
 		{
 			//id, title, text, description
-			$pageitem= new page ($pageid, $pagetitle, $pagetext, $pagedescription, $arrmitembeddedfiles, $section);
+			$pageitem= new page ($pageid, $pagetitle, $pagetext, $pagedescription, $arr_all, $section);
 			$arr_pages[]=$pageitem;
 		}
 		else
 		{
 			
 			$pagetext=$pagetitle . ": " . $pagetext;
-			$labelitem= new label ($labelid, $pagetitle, $pagetext,  $section, $arr_files_embedded_label, $pageid);
+			$labelitem= new label ($labelid, $pagetitle, $pagetext,  $section, $arr_all, $pageid);
 			$arr_labels[]=$labelitem;
 			$labelid++;
 		}

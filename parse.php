@@ -64,7 +64,7 @@ include("files-bb-data.php");
 //******************************************************
 //***********************************************Questions
  include("questions.php");
- include("poolquizzes.php");
+ include("questions2.php");
 //*********************************************************
  include("pages-links-bb-data.php");
  //***********************************
@@ -120,8 +120,13 @@ recurse_copy("moodle_src/course",$direxport . "/course");
   copy("moodle_src/roles.xml",$direxport . "/roles.xml");
   copy("moodle_src/scales.xml",$direxport . "/scales.xml");
  //***********************************************************
-
+ echo "<br>";
+echo "you will get " . $sectionzaehler . " sections in Moodle with this course.";
 include("zip.php");
+echo "<br>";
+echo "Submit only if you corrected matching questions.";
+echo "<br>";
+echo "<br>";
 echo "<br>";
 echo "<INPUT TYPE=\"submit\" name=\"submit\" />";
 echo "</form>";

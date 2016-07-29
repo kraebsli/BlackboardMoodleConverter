@@ -136,10 +136,7 @@ foreach ($s->item as $question) {
 			else if($q=="Essay" or $q=="File Upload")//************ESSAY**************************
 			//************************************************************
 			{
-				echo "quid" . $quid;
-				echo "<br>";
-				echo "<br>";
-				echo "<br>";
+				
 				include("essay-fileupload_bbm.php");
 				$quiz->setQuestions($ques);//Frage in Quiz einfügen
 				$questions_ar["$quid"]=$ques;

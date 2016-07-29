@@ -1,4 +1,8 @@
 <?php
+/* @copyright  Kathrin Braungardt, Ruhr-Universität Bochum
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
+ * */
 //**********************************************************************
 for($i=0; $i < count($arr_files); $i++)
 {
@@ -8,6 +12,18 @@ for($i=0; $i < count($arr_files); $i++)
 	$title=$arr_files[$i]->getTitle();
 if($title==$filename){
 	$title="";
+	$showfileandtitle=$filename;
+}
+else 
+{
+	if($title!=="")
+	{
+$showfileandtitle=$title . ": " . $filename;
+	}
+	else 
+	{
+		$showfileandtitle=$filename;
+	}
 }
 	//**************************************
 	/*if ($filename=="PDF")
@@ -80,14 +96,14 @@ if($title==$filename){
 	$xmlfile5.="<activity id=\"" . $i . "\" modulename=\"resource\" contextid=\"" . $fileid . "\" moduleid=\"" . $fileid ."\">";
 	$xmlfile5.="<resource id=\"" . $i . "\"><displayoptions>a:2:{s:10:\"printintro\";i:1;s:12:\"printheading\";i:0;}</displayoptions>
 <introformat>1</introformat>" .
-"<intro>" . $title . "</intro>
+"<intro></intro>
 <timemodified>" . $aktuellesdatum . "</timemodified>
 <revision>0</revision>
 <legacyfileslast>$@NULL@$</legacyfileslast>
 <display>0</display>
 <legacyfiles>2</legacyfiles>
 <tobemigrated>0</tobemigrated>
-<name>" . $filename . "</name><filterfiles>0</filterfiles><intro/></resource></activity>";
+<name>" . $showfileandtitle . "</name><filterfiles>0</filterfiles><intro/></resource></activity>";
 	$title="";
 	//************************
 	$file5 = fopen($pfad . "/resource.xml","w");

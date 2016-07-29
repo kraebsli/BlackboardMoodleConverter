@@ -14,6 +14,7 @@ foreach ($daten->resources->resource as $res) {
 	if(isset($test['title'])&& $test['title']!=="")
 	{
 		$quiz2=xmlencoding($test['title']);
+		$quiz2_demo=xmlencoding($test['title']);
 		//***************************************************************
 		$quizid=$test->assessmentmetadata->bbmd_asi_object_id;
 		$asstype=$test->assessmentmetadata->bbmd_assessmenttype;
