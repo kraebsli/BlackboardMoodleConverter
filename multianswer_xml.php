@@ -1,14 +1,21 @@
 <?php
+/* @copyright  Kathrin Braungardt, Ruhr-Universität Bochum
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
+ * */
 $qumultianswerid=$questions[$j]->getMultianswerId();
 $quantworten=$questions[$j]->getAntworten();
 $whichmultianswer=$questions[$j]->getShortanswer();
+$multianswerfeedback=$questions[$j]->getFeedbackCorrect();
+$stamp= make_unique_id_code();
+$version= make_unique_id_code();
 $xmlfileques.="
 <question id=\"" . $quid . "\">
 <parent>0</parent>
 <name>" . $qutitle . "</name>
 <questiontext>" . $quname . "</questiontext>
 <questiontextformat>1</questiontextformat>
-<generalfeedback></generalfeedback>
+<generalfeedback>" . $multianswerfeedback . "</generalfeedback>
 <generalfeedbackformat>1</generalfeedbackformat>
 <defaultmark>" . $qudefaultmark . "</defaultmark>
 <penalty>0.3333333</penalty>
@@ -56,14 +63,16 @@ if($whichmultianswer=="true")
 		$quparentid=$quantworten[$k]->getParentId();
 		$quname=$quantworten[$k]->getFragetext();
 		$quantworten2=$quantworten[$k]->getAnswers();
-		$qufeedback=$quantworten[$k]->getCorrectFeedback();
+$qufeedback=$quantworten[$k]->getCorrectFeedback();
+$stamp= make_unique_id_code();
+$version= make_unique_id_code();
 		$xmlfileques.="
 <question id=\"" . $quid . "\">
 <parent>" . $quparentid . "</parent>
 <name>" . $qutitle . "</name>
 <questiontext>" . $quname . "</questiontext>
 <questiontextformat>1</questiontextformat>
-<generalfeedback></generalfeedback>
+<generalfeedback>" . $multianswerfeedback . "</generalfeedback>
 <generalfeedbackformat>1</generalfeedbackformat>
 <defaultmark>1.0000000</defaultmark>
 <penalty>0.0000000</penalty>
@@ -81,13 +90,14 @@ if($whichmultianswer=="true")
           for($s=0;$s<count($quantworten2);$s++)
           {
           $quanswertext=$quantworten2[$s];
+         $qufeedback=$qufeedback[$s];
           $qufraction="1.00000000";
           		$xmlfileques.="
             <answer id=\"" . $s . "\">
               <answertext>" . $quanswertext . "</answertext>
               <answerformat>1</answerformat>
               <fraction>" . $qufraction . "</fraction>
-              <feedback> </feedback>
+              <feedback>" . $qufeedback ."</feedback>
               <feedbackformat>1</feedbackformat>
           </answer>";
             }//ende for k
@@ -103,7 +113,7 @@ if($whichmultianswer=="true")
           		</question>";
           		}//for antworten
           		}//ende if
-          		else //multianswer mit mc
+          		else //multianswer mit mc****************************************************************************************
           		{
           		for($k=0;$k<count($quantworten);$k++)
           		{
@@ -116,7 +126,8 @@ $qucorrfeedback=$quantworten[$k]->getCorrectFeedback();
 		$quincorrfeedback=$quantworten[$k]->getInCorrectFeedback();
 		$fraction="1.0000000";
 $fraction2="0.0000000";
-
+$stamp= make_unique_id_code();
+$version= make_unique_id_code();
 $xmlfileques.="
 <question id=\"" . $quid . "\">
 <parent>" . $quparentid . "</parent>

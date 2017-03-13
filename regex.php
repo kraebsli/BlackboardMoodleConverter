@@ -1,5 +1,8 @@
 <?php
-
+/* @copyright  Kathrin Braungardt, Ruhr-Universität Bochum
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
+ * */
 function lueckentextfrage($string)
 {
 //$test="<p>Was obst[obst] und ws gemüse [gemüse] sdf</p>";
@@ -30,12 +33,13 @@ function internerlink2($t)
 }
 function internerlink($t, $pid, $res, $s, $dir)
 {
-	
+
 	$replaced=$t;
 	$bildobjekt= array();
 
 	//**************************************************
-	$suchmuster='/<a href=\".*EmbeddedFile.*\">(.*)<\/a>/U';
+	//$suchmuster='/<a href=\".*EmbeddedFile.*\">(.*)<\/a>/U';
+	$suchmuster='/<a(.*)href=\".*EmbeddedFile.*\">(.*)<\/a>/U';
 
 	preg_match_all($suchmuster, $t, $treffer);
 	
@@ -116,7 +120,7 @@ function internerlink($t, $pid, $res, $s, $dir)
 						$identifier_hash=ltrim($identifier_hash, "0");
 						//******************************************************
 						 */
-		
+
 					$identifier=$fname[1];
 					$identifier_hash=hash('md5',$identifier);
 					$identifier_hash = preg_replace('/[^0-9]/','',$identifier_hash);
@@ -223,7 +227,7 @@ $replaced=$bild;
 		}
 				//***************************************************
 			$suchmuster_xid2='/EmbeddedFile\.location@X@[a-zA-Z0-9.]+/';
-$xid2=preg_match($suchmuster_xid2, $treffer[$i], $treffer5);
+$xid2=preg_match($suchmuster_xid2, $treffer[0][$i], $treffer5);
 	if(count($treffer5)>0 )
 		{
 

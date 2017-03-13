@@ -1,9 +1,14 @@
 <?php 
-
+/* @copyright  Kathrin Braungardt, Ruhr-Universität Bochum
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
+ * */
 $quantworten=$questions[$j]->getAntworten();
 $qushortanswerid=$questions[$j]->getShortanswerId();
 $qucorrfeedback=$questions[$j]->getFeedbackCorrect();
 $quincorrfeedback=$questions[$j]->getFeedbackInCorrect();
+$stamp= make_unique_id_code();
+$version= make_unique_id_code();
 $xmlfileques.="
 <question id=\"" . $quid . "\">
 <parent>0</parent>

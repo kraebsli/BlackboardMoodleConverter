@@ -1,7 +1,12 @@
 <?php
+/* @copyright  Kathrin Braungardt, Ruhr-Universität Bochum
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
+ * */
 $charset="UTF-8";
 //*****************************************************
-
+$coursetitle=xmlencoding($coursetitle);
+$courseshortname=xmlencoding($courseshortname);
 //******************************moodle-backup.xml
 $xmlfile='<?xml version="1.0" encoding="'.$charset.'"?>'."\n";
 $xmlfile.="<moodle_backup>\n";
@@ -66,7 +71,7 @@ elseif($modus=="multiplefolders")
 		$section=checkParentid($folderid, $arr_parentids, $arr);
 		$sectionid=$section+$sectionstart;
 		//***************************folder*************************************
-	if (count($folderfiles)>0)
+	if (count($folderfiles)>1)
 	{
 		
 
@@ -77,31 +82,124 @@ elseif($modus=="multiplefolders")
           <title>" . $foldername . "</title>
           <directory>activities/folder_" . $folderid . "</directory>
         </activity>";
-	}
-	
-	}
-}
-else 
-{
-	for($i=0; $i < count($arr_files); $i++)
+		
+	}//ende folderfiles
+	else 
 	{
-		$fileid=$arr_files[$i]->getId();
-		$filename=$arr_files[$i]->getTitle();
+		for($b=0; $b < count($folderfiles); $b++)
+		{
+			
+		$fileid=$folderfiles[$b]->getId();
+		$helparray_nonfolderfiles[]=$fileid;
+		$filename=$folderfiles[$b]->getTitle();
 		//$filename=xmlencoding($filename);
-		$sectionid=$arr_files[$i]->getSection();
+			
+		$sectionid=$folderfiles[$b]->getSection();
 		$sectionid=$sectionid+$sectionstart;
 		$xmlfile.=" <activity>
           <moduleid>". $fileid . "</moduleid>";
-$xmlfile.="<sectionid>" . $sectionid . "</sectionid>";
-$xmlfile.="<modulename>resource</modulename>
+		$xmlfile.="<sectionid>" . $sectionid . "</sectionid>";
+		$xmlfile.="<modulename>resource</modulename>
 		<title>$filename</title>
 		<directory>activities/resource_". $fileid . "</directory>
     </activity>";
-	}	
+		}
+	
+	}
+	}//for count arr_folder_simple
+	
+	for($i=0; $i <= count($arr_allItems); $i++)
+	{
+	if ($arr_allItems[$i] instanceof label)
+	{
+		$sectionid=$arr_allItems[$i]->getSection()+$sectionstart;
+		$xmlfile.="<activity moduleid=\"" . $arr_allItems[$i]->getId() . "\" modulename=\"label\">
+          <directory>activities/label_" . $arr_allItems[$i]->getId() . "</directory>
+          <sectionid>" . $sectionid . "</sectionid>
+          		<title>" .  $arr_allItems[$i]->getTitle() . "</title>
+          				</activity>";
+	}
+	elseif ($arr_allItems[$i] instanceof page)
+	{
+		$sectionid=$arr_allItems[$i]->getSection()+$sectionstart;
+		$xmlfile.="<activity moduleid=\"" . $arr_allItems[$i]->getId() . "\" modulename=\"page\">
+          <directory>activities/page_" . $arr_allItems[$i]->getId() . "</directory>
+          <sectionid>" . $sectionid . "</sectionid>
+          <title>" .  $arr_allItems[$i]->getTitle() . "</title>
+          </activity>";
+	}
+	elseif ($arr_allItems[$i] instanceof link)
+	{
+		$sectionid=$arr_allItems[$i]->getSection()+$sectionstart;
+		$urltitle=$arr_allItems[$i]->getTitle();
+		$urltitle=xmlencoding($urltitle);
+		$xmlfile.="<activity><moduleid>" . $arr_allItems[$i]->getId() . "</moduleid>
+				<sectionid>" . $sectionid . "</sectionid>
+				<modulename>url</modulename>
+<title>" . $urltitle  . "</title>
+<directory>activities/url_" . $arr_allItems[$i]->getId() . "</directory>
+</activity>";
+	}
+	}
+	
+}
+else 
+{
+	for($i=0; $i <= count($arr_allItems); $i++)
+	{
+		if ($arr_allItems[$i] instanceof file) {
+			
+			$fileid=$arr_allItems[$i]->getId();
+			$filename=$arr_allItems[$i]->getTitle();
+			//$filename=xmlencoding($filename);
+			
+			$sectionid=$arr_allItems[$i]->getSection();
+			$sectionid=$sectionid+$sectionstart;
+			$xmlfile.=" <activity>
+          <moduleid>". $fileid . "</moduleid>";
+			$xmlfile.="<sectionid>" . $sectionid . "</sectionid>";
+			$xmlfile.="<modulename>resource</modulename>
+			<title>$filename</title>
+			<directory>activities/resource_". $fileid . "</directory>
+    </activity>";
+		}
+		elseif ($arr_allItems[$i] instanceof label)
+		{
+			$sectionid=$arr_allItems[$i]->getSection()+$sectionstart;
+			$xmlfile.="<activity moduleid=\"" . $arr_allItems[$i]->getId() . "\" modulename=\"label\">
+          <directory>activities/label_" . $arr_allItems[$i]->getId() . "</directory>
+          <sectionid>" . $sectionid . "</sectionid>
+          		<title>" .  $arr_allItems[$i]->getTitle() . "</title>
+          				</activity>";
+		}
+		elseif ($arr_allItems[$i] instanceof page)
+		{
+			$sectionid=$arr_allItems[$i]->getSection()+$sectionstart;
+			$xmlfile.="<activity moduleid=\"" . $arr_allItems[$i]->getId() . "\" modulename=\"page\">
+          <directory>activities/page_" . $arr_allItems[$i]->getId() . "</directory>
+          <sectionid>" . $sectionid . "</sectionid>
+          <title>" .  $arr_allItems[$i]->getTitle() . "</title>
+          </activity>";
+		}
+		elseif ($arr_allItems[$i] instanceof link)
+		{
+			$sectionid=$arr_allItems[$i]->getSection()+$sectionstart;
+			$urltitle=$arr_allItems[$i]->getTitle();
+			$urltitle=xmlencoding($urltitle);
+			$xmlfile.="<activity><moduleid>" . $arr_allItems[$i]->getId() . "</moduleid>
+				<sectionid>" . $sectionid . "</sectionid>
+				<modulename>url</modulename>
+<title>" . $urltitle  . "</title>
+<directory>activities/url_" . $arr_allItems[$i]->getId() . "</directory>
+</activity>";
+		}
+	}
+	
+	
 }
 			
 			//******************************************************************labels
-			if(count($arr_labels)>0)
+			/*if(count($arr_labels)>0)
 			{
 				for($i=0; $i<count($arr_labels); $i++)
 				{
@@ -113,7 +211,7 @@ $xmlfile.="<modulename>resource</modulename>
           				</activity>";
 
 }
-}
+}*/
 //******************************************************************************
 //quizzes*****************************************************tests
 
@@ -145,7 +243,7 @@ for($i=0; $i<count($quiz_ar2); $i++)
 }
 }
 //******************************************************************pages
-if(count($arr_pages)>0)
+/*if(count($arr_pages)>0)
 			{
 			for($i=0; $i<count($arr_pages); $i++)
 			{
@@ -157,9 +255,9 @@ if(count($arr_pages)>0)
           </activity>";
 
 }
-        }
+        }*/
 //****************************************************************links
-			if(count($arr_links)>0)
+			/*if(count($arr_links)>0)
 			{
 			for($i=0; $i<count($arr_links); $i++)
 				{
@@ -173,26 +271,17 @@ if(count($arr_pages)>0)
 <directory>activities/url_" . $arr_links[$i]->getId() . "</directory>
 </activity>";
 }
-        }
+        }*/
         //**********************************************************************
          
         $xmlfile.="</activities>";
         //***************************Sections*************************************
-        $xmlfile.="<sections>
-        <section>
-          <sectionid>1</sectionid>
-          <title>Einfuehrung</title>
-          <directory>sections/section_1</directory>
-        </section>
-         <section>
-          <sectionid>2</sectionid>
-          <title>Tests</title>
-          <directory>sections/section_2</directory>
-        </section>";
+        $xmlfile.="<sections>";
          
         for($i=0; $i < count($arr_parentids); $i++)
         {
         $sectionid=$arr_parentids[$i]->getId();
+    
         $sectionid=$sectionid+$sectionstart;
         $sectionname=$arr_parentids[$i]->getName();
      
@@ -287,31 +376,7 @@ if(count($arr_pages)>0)
         <level>root</level>
         <name>questionbank</name>
         <value>0</value>
-      </setting>
-      <setting>
-        <level>section</level>
-        <section>section_1</section>
-        <name>section_1_included</name>
-        <value>1</value>
-      </setting>
-      <setting>
-        <level>section</level>
-        <section>section_1</section>
-        <name>section_1_userinfo</name>
-        <value>0</value>
-      </setting>
-          <setting>
-        <level>section</level>
-        <section>section_2</section>
-        <name>section_2_included</name>
-        <value>1</value>
-      </setting>
-      <setting>
-        <level>section</level>
-        <section>section_2</section>
-        <name>section_2_userinfo</name>
-        <value>0</value>
-        	</setting>";
+      </setting>";
         	 
         	for($i=0; $i < count($arr_parentids); $i++)
         	{
@@ -366,7 +431,7 @@ if(count($arr_pages)>0)
           		$folderfiles=$arr_folder_simple[$i]->getFiles();
           		$section=checkParentid($folderid, $arr_parentids, $arr);
           		$sectionid=$section+$sectionstart;
-          		if (count($folderfiles)>0)
+          		if (count($folderfiles)>1)
           		{
           		 $xmlfile.= "<setting>
         <level>activity</level>
@@ -381,6 +446,28 @@ if(count($arr_pages)>0)
         <name>folder_" . $folderid . "_userinfo</name>
         <value>0</value>
       </setting>";
+          		}
+          		else 
+          		{
+          			for($b=0; $b < count($folderfiles); $b++)
+          			{
+          			$fileid=$folderfiles[$b]->getId();
+          			if(isset($fileid) && $fileid!="")
+          			{
+          			$xmlfile.= "<setting>
+          			<level>activity</level>
+          				<activity>resource_" . $fileid . "</activity>
+        <name>resource_" . $fileid . "_included</name>
+          			        <value>1</value>
+      </setting>
+          			      <setting>
+        <level>activity</level>
+        <activity>resource_" . $fileid . "</activity>
+          <name>resource_" . $fileid . "_userinfo</name>
+          			          <value>0</value>
+          </setting>";
+          			}
+          			}
           		}
           			
           	}

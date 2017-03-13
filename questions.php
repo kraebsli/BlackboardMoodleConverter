@@ -2,6 +2,10 @@
 /*
  * Created on 15.08.2014
   */
+/* @copyright  Kathrin Braungardt, Ruhr-Universität Bochum
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
+ * */
   //***********************************************Questions
 include("quiz.php");
 include("question.php");
@@ -180,6 +184,7 @@ else if($q=="Jumbled Sentence")//**************************************
 				else if($q=="Ordering")//************ORDERING**************************
 			//************************************************************
 			{
+				
 				include("ordering_bbm.php");
 				$quiz->setQuestions($ques);//Frage in Quiz einfügen
 				$questions_ar["$quid"]=$ques;
@@ -218,6 +223,7 @@ else if($q=="Jumbled Sentence")//**************************************
 if($sollsein=="true")
 		{
 		$quiz_ar[]=$quiz;//Quiz in array einfügen
+		$quiz_ar_ids["$quizid"]=$quiz;//Quiz in array einfügen
 		$sollsein=false;
 		}
 		$contextid++;

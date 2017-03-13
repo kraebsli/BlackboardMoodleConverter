@@ -13,9 +13,7 @@ foreach ($daten->resources->resource as $res) {
 	{
 	if(isset($test['title'])&& $test['title']!=="")
 	{
-		
 		$quiz2=xmlencoding($test['title']);
-		$quiz2_demo=xmlencoding($test['title']);
 		//***************************************************************
 		$quizid=$test->assessmentmetadata->bbmd_asi_object_id;
 		$asstype=$test->assessmentmetadata->bbmd_assessmenttype;
@@ -38,11 +36,8 @@ foreach ($daten->resources->resource as $res) {
 		//section->section->selection_ordering->selection->or_selection->selection_metadata
 		//section->section->selection_ordering->selection
 		$seltype=$test->section->section->selection_ordering->selection;
-$seltype=trim($seltype['seltype']);
-//if($seltype!=="All")//??????????????????
-//{
-echo "sdlfjsdlfj sdlfjsdklf j" . $categoryid;
-echo "<br>";
+		if(isset($seltype))
+		{
 			$quiz_p= new quiz($quiz2,$quizid,$contextid, $categoryid, $gesamtscore, $quizdescription);
 			$categoryid++;
 			$quiz2="";
@@ -54,18 +49,20 @@ echo "<br>";
 			$multianswerid=0;
 			$scorevalue="0";
 		$seltype=trim($seltype['seltype']);
-		/*if($seltype!=="All" || $seltype!=="")
+		if($seltype!=="All" || $seltype!=="")
 		{
 			
 			
 		//echo $test['title'] . "enthaelt unsymmetrisches Verhaeltnis von Zahl der Fragen zu Anzahl anzuzeigener Fragen im Fragensatz.";
 		
-		}*/
+		}
 	//***********************************************************
 	foreach ($test->section->section->selection_ordering->selection->or_selection->selection_metadata as $s) {
 //$s2=$s->selection_ordering->selection->or_selection->selection_metadata;
 $s=trim($s);
 $quids=str_replace("_", "", $s);
+echo "sdkfjsdlfj" . $quids;
+echo "<br>";
 		if(isset($questions_ar["$quids"]))
 		{
 	
@@ -183,9 +180,7 @@ $quids=str_replace("_", "", $s);
 		else if($q=="Ordering")//************ORDERING**************************
 		//************************************************************
 		{
-			
 			include("ordering_bbm.php");
-			
 			$quiz_p->setQuestions($ques);//Frage in Quiz einfügen
 			$questions_ar["$quid"]=$ques;
 		}//ende matching*********************************************
@@ -222,8 +217,7 @@ $quids=str_replace("_", "", $s);
 	}
 	//********************************************************************************
 	$quiz_ar2[]=$quiz_p;//Quiz in array einfügen
-	$quiz_ar_ids["$quizid"]=$quiz_p;//Quiz in array einfügen
-	//}//seltype
+	}//seltype
 	}//title
 	}
 }//foreach

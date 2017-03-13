@@ -15,12 +15,14 @@
  	var $id;
  	var $files;
  	var $parentid;
+ 	var $description;
  	function folder($n,$i,$p)
  	{
  		$this->name=$n;
  		$this->id=$i;
  		$this->parentid=$p;
  		$this->files=array();
+ 		$this->description="";
  		
  	}
  	function setFiles($file)
@@ -47,6 +49,16 @@
  	{
  		
  		return $this->files;
+ 	}
+ 	function getDescription()
+ 	{
+ 	
+ 		return $this->description;
+ 	}
+ 	function setDescription($d)
+ 	{
+ 	
+ 		$this->description =$d;
  	}
  }
 ?>

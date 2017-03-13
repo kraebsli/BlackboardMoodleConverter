@@ -21,6 +21,9 @@
  	 	var $description;
  	 	var $section;
  	var $poolquestions;
+ 	var $deliverytype;
+ 	var $timelimit;
+ 	var $attemptcount;
  	function quiz($n, $i, $c, $cat, $g, $d)
  	{
  		$this->name=$n;
@@ -31,7 +34,7 @@
  		$this->categoryid=$cat;
  		$this->gesamtscore=$g;
  		$this->description=$d;
- 		$this->section=0;
+ 		$this->section=1;
  	}
  	
  	function getName()
@@ -52,7 +55,7 @@
  function getCategoryId()
  	{
  		
- 		return $this->contextid;
+ 		return $this->categoryid;
  	}
  	function setQuestions($q)
  	{
@@ -98,6 +101,36 @@
  	{
  	
  			return $this->section;
+ 	}
+ 	function setDeliveryType($d)
+ 	{
+ 	
+ 		$this->deliverytype=$d;
+ 	}
+ 	function getDeliveryType()
+ 	{
+ 	
+ 		return $this->deliverytype;
+ 	}
+ 	function setTimeLimit($t)
+ 	{
+ 	
+ 		$this->timelimit=$t;
+ 	}
+ 	function getTimeLimit()
+ 	{
+ 	
+ 		return $this->timelimit;
+ 	}
+ 	function setAttemptCount($t)
+ 	{
+ 	
+ 		$this->attemptcount=$t;
+ 	}
+ 	function getAttemptCount()
+ 	{
+ 	
+ 		return $this->attemptcount;
  	}
  }
 ?>

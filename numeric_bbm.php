@@ -1,5 +1,8 @@
 <?php
-
+/* @copyright  Kathrin Braungardt, Ruhr-Universität Bochum
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
+ * */
 $questiontype="numerical";
 
 $sollsein=true;
@@ -25,7 +28,7 @@ foreach ($question->resprocessing->respcondition as $l) {
 		$varlte=$l->conditionvar->varlte;
 		$varequal=$l->conditionvar->varequal;
 		$loesung=$varequal;
-		$fehler=$varlte-$loesung;
+		$fehler=(float)$varlte-(float)$loesung;
 			
 	}
 }

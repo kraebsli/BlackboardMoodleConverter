@@ -1,7 +1,11 @@
 <?php
-
+/* @copyright  Kathrin Braungardt, Ruhr-Universität Bochum
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
+ * */
 //*******************questions.xml
 //*************************************************************************
+$stamp= make_unique_id_code();
 
 $xmlfileques="<question_categories>";
 for($i=0; $i<count($quiz_ar); $i++)
@@ -96,6 +100,7 @@ $xmlfileques.="</question_category>";
 //*********************Fragen aus poolmix*****************************************
 //********************************************************************************
 if(count($quiz_ar2)>0){
+
 for($i=0; $i<count($quiz_ar2); $i++)
 {
 	//$frageimSatz=false;
@@ -113,6 +118,8 @@ for($i=0; $i<count($quiz_ar2); $i++)
 	$quizid=$quiz_ar2[$i]->getId();
 	$categoryname=$quiz_ar2[$i]->getName();
 	$categoryid=$quiz_ar2[$i]->getCategoryId();
+	echo "ssss" . $i;
+	echo "<br>";
 	$contextid=$quiz_ar2[$i]->getContextId();
 	$quizdescription=$quiz_ar2[$i]->getDescription();
 	$xmlfileques.="<question_category id=\"" . $categoryid . "\">
@@ -133,12 +140,14 @@ $xmlfileques.="
 	//**************************************questions************************
 	//**************************************************************************
 $j=0;
+
 	for($j=0;$j<count($questions); $j++)
 	{
 		if($questions[$j]->getFrageimSatz()==true)
 		{
 		$quid=$questions[$j]->getId();
 		$quname=$questions[$j]->getQuestiontext();
+		
 		$qutype=$questions[$j]->getQuestiontype();
 		$qutitle=$questions[$j]->getTitle();
 

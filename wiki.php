@@ -7,27 +7,29 @@
  * makes use of Moodle - http://moodle.org/
  * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
  * */
- class page
+ class wiki
  
  {
 
 var $id;
 var $title;
-var $text2;
+var $text;
 var $desc;
 var $embedar;
 var $section;
+var $linkref;
  	 	 	
 
- 	function page($i, $t, $te, $d, $em, $s)
+ 	function wiki($i, $t, $te, $em, $s, $l)
  	{
  	$this->embedar=array();
  		$this->id=$i;
 
  		$this->title=$t;
- 		$this->desc=$d;
- 		$this->text2=$te;
+ 	
+ 		$this->text=$te;
  		$this->embedar=$em;
+ 		$this->linkref=$l;
 $this->section=$s;
  	}
   function getAr()
@@ -51,7 +53,11 @@ $this->section=$s;
  		
  		return $this->id;
  	}
-
+ 	function getLinkRef()
+ 	{
+ 			
+ 		return $this->linkref;
+ 	}
  function getTitle()
  	{
  		
@@ -61,24 +67,7 @@ $this->section=$s;
  	function getText()
  	{
  		
- 		return $this->text2;
+ 		return $this->text;
  	}
- 	function addElement($e)
- 	{
- 			
- 		$this->text2 .=$e;
- 			
- 			
- 	}
- 	function addFile($p)
- 	{
- 		for($i=0;$i<count($p); $i++)
- 		{
- 		$this->embedar[]=$p[$i];
- 		}
- 	
- 	
- 	
- 		}
  }
 ?>

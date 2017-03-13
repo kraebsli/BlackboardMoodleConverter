@@ -20,12 +20,12 @@
  $backupdate=$aktuellesdatum;
  //***************************************************************
 //allgemeine Variablen
-$moodleversion=" ";
-$moodlerelease=" ";
-$backupversion="   ";
-$backuprelease=" ";
-$original_wwwroot=" ";
-$moodleidentifier="  ";
+$moodleversion="2014111003.03";
+$moodlerelease="2.8.3+ (Build: 20150219)";
+$backupversion="2014111000";
+$backuprelease="2.8";
+$original_wwwroot="https://yourinstitution.com";
+$moodleidentifier="yourinstitution.xyz+";
 
 
 ?>

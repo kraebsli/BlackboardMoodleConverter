@@ -1,4 +1,8 @@
 <?php
+/* @copyright  Kathrin Braungardt, Ruhr-Universität Bochum
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
+ * */
 //directories für quizzes
 
  	 for($i=0; $i<count($quiz_ar); $i++)
@@ -17,6 +21,35 @@
 	$quizsectionid=$quiz_ar[$i]->getSectionid();
 	$quizsectionid=$quizsectionid+$sectionstart;
 	//$title=$arr_files[$i]->getTitle();
+	$deliverytype=$quiz_ar_ids["$quizid"]->getDeliveryType();
+	$timelimit=$quiz_ar_ids["$quizid"]->getTimeLimit();
+	$attemptcount=$quiz_ar_ids["$quizid"]->getAttemptCount();
+	if($attemptcount>0)
+	{
+		
+	}
+	else 
+	{
+		$attemptcount=0;
+	}
+	if($timelimit>0)
+	{
+		
+	}
+	else 
+	{
+		$timelimit=0;
+	}
+	if($deliverytype=="QUESTION_BY_QUESTION")
+	{
+		$deliverytype="1";
+		$navmethod="sequential";
+	}
+	else 
+	{
+		$deliverytype="0";
+		$navmethod="free";
+	}
 	//*****************************************************
 	$quizpfad=$direxport . "/activities/quiz_" . $quizid;
 	mkdir($quizpfad, 0700);
@@ -33,24 +66,24 @@
     <introformat>1</introformat>
     <timeopen>0</timeopen>
     <timeclose>0</timeclose>
-    <timelimit>0</timelimit>
+    <timelimit>" . $timelimit . "</timelimit>
     <overduehandling>autosubmit</overduehandling>
     <graceperiod>0</graceperiod>
     <preferredbehaviour>deferredfeedback</preferredbehaviour>
-    <attempts_number>0</attempts_number>
+    <attempts_number>" . $attemptcount . "</attempts_number>
     <attemptonlast>0</attemptonlast>
     <grademethod>1</grademethod>
     <decimalpoints>2</decimalpoints>
     <questiondecimalpoints>-1</questiondecimalpoints>
     <reviewattempt>69904</reviewattempt>
-    <reviewcorrectness>4368</reviewcorrectness>
-    <reviewmarks>4368</reviewmarks>
-    <reviewspecificfeedback>4368</reviewspecificfeedback>
-    <reviewgeneralfeedback>4368</reviewgeneralfeedback>
-    <reviewrightanswer>4368</reviewrightanswer>
-    <reviewoverallfeedback>4368</reviewoverallfeedback>
-    <questionsperpage>0</questionsperpage>
-    <navmethod>free</navmethod>
+    <reviewcorrectness>0</reviewcorrectness>
+    <reviewmarks>0</reviewmarks>
+    <reviewspecificfeedback>0</reviewspecificfeedback>
+    <reviewgeneralfeedback>0</reviewgeneralfeedback>
+    <reviewrightanswer>0</reviewrightanswer>
+    <reviewoverallfeedback>0</reviewoverallfeedback>
+    <questionsperpage>" . $deliverytype . "</questionsperpage>
+    <navmethod>" . $navmethod . "</navmethod>
     <shufflequestions>0</shufflequestions>
     <shuffleanswers>1</shuffleanswers>
     <questions>";
@@ -96,7 +129,7 @@ for($j=0;$j<count($questions); $j++)
     $xmlfile9.="</question_instances>
     <feedbacks>
       <feedback id=\"12223\">
-        <feedbacktext>Feedback gesamt</feedbacktext>
+        <feedbacktext></feedbacktext>
         <feedbacktextformat>1</feedbacktextformat>
         <mingrade>0.00000</mingrade>
         <maxgrade>101.00000</maxgrade>
@@ -225,6 +258,36 @@ for($i=0; $i<count($quiz_ar2); $i++)
 	$quizsectionid=$quiz_ar2[$i]->getSectionid();
 	$quizsectionid=$quizsectionid+$sectionstart;
 	//$title=$arr_files[$i]->getTitle();
+	$deliverytype=$quiz_ar_ids["$quizid"]->getDeliveryType();
+	$timelimit=$quiz_ar_ids["$quizid"]->getTimeLimit();
+	$attemptcount=$quiz_ar_ids["$quizid"]->getAttemptCount();
+	if($attemptcount>0)
+	{
+	
+	}
+	else
+	{
+		$attemptcount=0;
+	}
+	if($timelimit>0)
+	{
+	
+	}
+	else
+	{
+		$timelimit=0;
+	}
+	if($deliverytype=="QUESTION_BY_QUESTION")
+	{
+		$deliverytype="1";
+		$navmethod="sequential";
+	}
+	else
+	{
+		$deliverytype="0";
+		$navmethod="free";
+	}
+	//*****************************************************
 	//*****************************************************
 	$quizpfad=$direxport . "/activities/quiz_" . $quizid;
 	mkdir($quizpfad, 0700);
@@ -241,7 +304,7 @@ for($i=0; $i<count($quiz_ar2); $i++)
     <introformat>1</introformat>
     <timeopen>0</timeopen>
     <timeclose>0</timeclose>
-    <timelimit>0</timelimit>
+    <timelimit>" . $timelimit . "</timelimit>
     <overduehandling>autosubmit</overduehandling>
     <graceperiod>0</graceperiod>
     <preferredbehaviour>deferredfeedback</preferredbehaviour>
@@ -251,14 +314,14 @@ for($i=0; $i<count($quiz_ar2); $i++)
     <decimalpoints>2</decimalpoints>
     <questiondecimalpoints>-1</questiondecimalpoints>
     <reviewattempt>69904</reviewattempt>
-    <reviewcorrectness>4368</reviewcorrectness>
-    <reviewmarks>4368</reviewmarks>
-    <reviewspecificfeedback>4368</reviewspecificfeedback>
-    <reviewgeneralfeedback>4368</reviewgeneralfeedback>
-    <reviewrightanswer>4368</reviewrightanswer>
-    <reviewoverallfeedback>4368</reviewoverallfeedback>
-    <questionsperpage>0</questionsperpage>
-    <navmethod>free</navmethod>
+    <reviewcorrectness>0</reviewcorrectness>
+    <reviewmarks>0</reviewmarks>
+    <reviewspecificfeedback>0</reviewspecificfeedback>
+    <reviewgeneralfeedback>0</reviewgeneralfeedback>
+    <reviewrightanswer>0</reviewrightanswer>
+    <reviewoverallfeedback>0</reviewoverallfeedback>
+ <questionsperpage>" . $deliverytype . "</questionsperpage>
+     <navmethod>" . $navmethod . "</navmethod>
     <shufflequestions>0</shufflequestions>
     <shuffleanswers>1</shuffleanswers>
     <questions>";
@@ -336,7 +399,7 @@ $xmlfile9.="<question_instance id=\"" . $j . "\">
     $xmlfile9.="</question_instances>
     <feedbacks>
       <feedback id=\"12223\">
-        <feedbacktext>Feedback gesamt</feedbacktext>
+        <feedbacktext></feedbacktext>
         <feedbacktextformat>1</feedbacktextformat>
         <mingrade>0.00000</mingrade>
         <maxgrade>101.00000</maxgrade>
@@ -429,7 +492,7 @@ $xmlfile12.="<module id=\"" . $quizid . "\" version=\"" . $quizmoduleversion . "
   <indent>0</indent>
   <visible>1</visible>
   <visibleold>1</visibleold>
-  <groupmode>1</groupmode>
+  <groupmode>0</groupmode>
   <groupingid>0</groupingid>
   <groupmembersonly>0</groupmembersonly>
   <completion>0</completion>

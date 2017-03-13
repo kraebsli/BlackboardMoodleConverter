@@ -1,14 +1,23 @@
 <?php
-
+/* @copyright  Kathrin Braungardt, Ruhr-Universität Bochum
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
+ * */
 $zaehler++;
 $questiontype="multianswer";
 $sollsein=true;
 $multianswerid++;
 $fragen=array();
 $antworten=array();
+$cfeedback=array();
+$incfeedback=array();
 $scorevalue="";
 //$multichoiceid=0;
 $optionenzaehler=0;
+echo "<h3>";
+echo $quiz2_demo;
+echo "<br>";
+echo "</h3>";
 //***************************Frageninhalte
 foreach ($question->presentation->flow->flow as $flow) {
 	if($flow['class']=="QUESTION_BLOCK")//Fragetext
@@ -17,6 +26,8 @@ foreach ($question->presentation->flow->flow as $flow) {
 		//Fragetext
 		include("questiontext.php");
 		$qt=lueckentextfrage($qt);//moodlestring
+		echo $questiontitle;
+		echo "<br>";
 	}
 }
 //**************************************************
@@ -50,37 +61,55 @@ foreach ($question->resprocessing->respcondition as $l) {
 				$subfrage.="~%100%" . $or2;
 			}
 
-		
-			}
-			$subfrage.="}";
+		$ifb2=$or2['respident'];
+			
 			
 			//**************feedback
 			foreach ($question->itemfeedback as $itemfeedback) {//feedback
 					
 				$ifb=trim($itemfeedback['ident']);
 					
-				$abgleich="correct-" . $auswahl;
-				$abgleich2="incorrect-" . $auswahl;
-				if($ifb==$abgleich)
+				$abgleich="correct-" . trim($ifb2);
+				$abgleich2="incorrect-" . trim($ifb2);
+								
+				if($ifb==$abgleich && $ifb!=="")
 				{
+					
 					$correctfeedback=$itemfeedback->flow_mat->flow_mat->material->mat_extension->mat_formattedtext;
+					
+					$correctfeedback=str_replace("Richtig.", "Richtig ist: ", $correctfeedback);
 					$correctfeedback=xmlencoding($correctfeedback);
+					$cfeedback[]=$correctfeedback;
+					
+					$subfrage.="#" . $correctfeedback;
+					echo "pro Item korrekt: " . $correctfeedback;
+					echo "<br>";
+					echo "<br>";
 				}
 				elseif($abgleich2==$ifb)
 				{
 					$incorrectfeedback=$itemfeedback->flow_mat->flow_mat->material->mat_extension->mat_formattedtext;
 					$incorrectfeedback=xmlencoding($incorrectfeedback);
+					$incfeedback[]=$incorrectfeedback;
+					echo "pro Item inkorrekt: " . $incorrectfeedback;
+					echo "<br>";
 				}
 			}
 				
 			//***********************feedback
-			
+			}
+			$subfrage.="}";
 			//new shortanswer
-			$shanswer= new shortanswer($quid,$questionid_sh,$antworten,$correctfeedback,$incorrectfeedback, $subfrage, $shortanswerid, $questiontitle );
+			$shanswer= new shortanswer($quid,$questionid_sh,$antworten,$cfeedback,$incfeedback, $subfrage, $shortanswerid, $questiontitle );
 			$fragen[]=$shanswer;
 			//$shortanswerid=0;
 			$antworten=array();
+			$cfeedback=array();
+			$incfeedback=array();
 			$subfrage="";
+			$ifb="";
+			$abgleich="";
+			$abgleich2="";
 		}//ende foreach or
 	}//ende title correct
 
@@ -97,13 +126,21 @@ foreach ($question->itemfeedback as $itemfeedback) {//feedback
 	if($ifb=="correct" && $correctfeedback=="")
 	{
 		$correctfeedback=$itemfeedback->flow_mat->flow_mat->material->mat_extension->mat_formattedtext;
-		$correctfeedback=xmlencoding($correctfeedback);
+		
 		//echo $correctfeedback . "corrallg<br>";
+		$correctfeedback=str_replace("Richtig.", "Richtig ist: ", $correctfeedback);
+		$correctfeedback=xmlencoding($correctfeedback);
+		echo "Gesamt korrekt: " . $correctfeedback;
+		echo "<br>";
+		echo "<br>";
 	}
 	else if($ifb=="incorrect" && $incorrectfeedback=="")
 	{
 		$incorrectfeedback=$itemfeedback->flow_mat->flow_mat->material->mat_extension->mat_formattedtext;
 		$incorrectfeedback=xmlencoding($incorrectfeedback);
+		echo "Gesamt nicht korrekt: " . $incorrectfeedback;
+		echo "<br>";
+		echo "<br>";
 		//echo $incorrectfeedback . "incorrallg<br>";
 	}
 		

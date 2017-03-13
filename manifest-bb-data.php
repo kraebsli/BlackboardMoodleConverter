@@ -10,6 +10,17 @@ $temppath=$dir . "/temp/";
 mkdir($temppath, 0700);
 mkdir($direxport . "/files", 0700);
 //****************************
+/*if($modus=="iter")
+{
+	
+	$iter=true;
+}
+else 
+{
+$iter=false;
+}
+*/
+$iter=true;
 $daten = simplexml_load_file($xml_feed_url, "SimpleXMLIterator");//run through all .dat files
 //$xmlIterator = new SimpleXMLIterator($xml_feed_url);
 $arr=array();//Folder with key folderid;
@@ -20,23 +31,46 @@ $arr_files_embedded_quiz=array();//Files
 $arr_files_embedded_quiz_drag=array();//Files
 $arr_files_embedded_url=array();//Files
 $arr_files_embedded_label=array();//Files
+$helparray_nonfolderfiles=array();
 $arr_pages=array();
 $arr_links=array();
 $arr_labels=array();
 $folderIDArray=array();
 $arr_parentids=array();
 $arr_parentids_2=array();//for parentids
-$sectionzaehler=1;
-$sectionstart=2;//
+$arr_allItems=array();//for parentids
+$sectionzaehler=2;
+$sectionstart=0;//
 $labelid=0;
 //*********************************************
-
-
+$arr_pages2=array();
+$arr_parentids_3=array();//for parentids
+//*******************************************
+$hier=array();
+$depth=3;
+$v=0;
+$v1=0;
+$v2=0;
+$v3=0;
+$v4=0;
+$v5=0;
+$v6=0;
+$v7=0;
+//************************
+$order=0;
+//************************
+$sectionitem= new sectiondata("1", "Start", "1");
+$arr_parentids[]=$sectionitem;
+$arr_parentids_2[]="1";
+echo "<h3>Course structure</h3>";
+//***********************************************
 $sxi = new RecursiveIteratorIterator(
 		$daten,
 		RecursiveIteratorIterator::SELF_FIRST);
+$depth=3;
 
 foreach($sxi as $item) {
+	
 	//****************************************************************
 	$title=$item->title;//title normal
 
@@ -44,22 +78,28 @@ foreach($sxi as $item) {
 	{
 		$title=$toptitle;
 		$toptitle="";
+	
 	}
 	else 
 	{
 	$title2=$item->item->title;//unter title
+
 	if ($title2=="--TOP--")
 	{
 	
 $toptitle=$title;
+
 	}
 
 	}
+	
+	
 	//********************************************************************
 $topitemref1=$item['identifierref'];
 if($topitemref1!="")
 {
 	$topitemdat1=$dir . "/" . $topitemref1 . ".dat"; //directory
+	
 	$topitem_single1=simplexml_load_file($topitemdat1);
 	//**************************************
 	if($topitem_single1!==FALSE)
@@ -68,23 +108,26 @@ if($topitemref1!="")
 	$topitemid1 = preg_replace('![^0-9]!', '', $topitemid1); //replace all except for 0 - 9
 	$targettype=$topitem_single1->TARGETTYPE;
 	$targettype=$targettype['value'];
+
 	$arrmitembeddedfiles=array();
 	if($targettype=="STAFF_INFO")
 	{
 	
-		$sectionitem= new sectiondata($sectionzaehler, $title, $topitemid1);
+		/*$sectionitem= new sectiondata($sectionzaehler, $title, $topitemid1);
 		$arr_parentids[]=$sectionitem;
-		$arr_parentids_2[]=$topitemid1;
-	
+		$arr_parentids_2[]=$topitemid1;*/
+		$contact_title=$topitem_single1->TITLE;
+		echo $contact_title['value'];
 	
 		//*****************textlabel dabei
-		$textlabel="Diese Funktion kann aus Blackboard nicht in Moodle uebernommen werden.";
+		/*$textlabel="Diese Funktion kann aus Blackboard nicht in Moodle uebernommen werden.";
 		$textlabel=xmlencoding($textlabel);
 		$labelitem= new label ($labelid, "Info", $textlabel,  $sectionzaehler, $arrmitembeddedfiles, $topitemid1);
 		$arr_labels[]=$labelitem;
 		$labelid++;
+		//********************************************************************************************
 		$sectionzaehler++;
-		$topitemid1="";
+		$topitemid1="";*/
 	}//***************************************************************
 	else if($targettype=="APPLICATION")
 	{
@@ -97,7 +140,7 @@ if($topitemref1!="")
 		}
 		else
 		{
-			$sectionitem= new sectiondata($sectionzaehler, $title, $topitemid1);
+			/*$sectionitem= new sectiondata($sectionzaehler, $title, $topitemid1);
 			$arr_parentids[]=$sectionitem;
 			$arr_parentids_2[]=$topitemid1;
 			$textlabel="Diese Funktion kann aus Blackboard nicht in Moodle uebernommen werden.";
@@ -108,7 +151,7 @@ if($topitemref1!="")
 			$labelitem= new label ($labelid, "Info", $textlabel,  $sectionzaehler, $arrmitembeddedfiles, $topitemid1);
 			$arr_labels[]=$labelitem;
 			$labelid++;
-			$sectionzaehler++;
+			$sectionzaehler++;*/
 		}//if pregmatch
 	}
 	else //if targettype application
@@ -118,12 +161,16 @@ if($topitemref1!="")
 		{
 		$folderflag=$topitem_single1->FLAGS->ISFOLDER;
 
+		
+
 		if($folderflag['value']=="true")
 		{
-		
-			
+			//echo "folderflag " . $folderflag . "   " . $folderflag['value'] . "  " . $title;
+			//echo "<br>";
+			//echo "<br>";
+			$title=strip_tags($title);
 			if(preg_match("`^.*(http|//|<).*`", $title)){
-		
+
 			}
 			elseif(preg_match("`^(divider|placeholder).*`", $title))
 			{
@@ -138,7 +185,6 @@ if($topitemref1!="")
 				$title=trim($title);
 				$title=xmlencoding($title);
 				$parentid=$topitem_single1->PARENTID;
-				
 				$parentid=trim($parentid['value']);
 				if(isset($parentid) && $parentid!=="")
 				{
@@ -153,7 +199,7 @@ if($topitemref1!="")
 				//**********************************
 				$folderid=$topitem_single1['id'];
 				$folderid = preg_replace('![^0-9]!', '', $folderid); //ersetze alles außer 0 bis 9
-				
+			
 				$folderitem=new folder($title, $folderid, $parentid);
 							$arr["$folderid"]=$folderitem;
 				$arr_folder_simple[]=$folderitem;
@@ -207,20 +253,451 @@ if($topitemref1!="")
 						}//if isset
 						//***********************************************************
 						
-						if($textbeifolder!=="")
+						/*if($textbeifolder!=="")
 						{
-				
+				//*****************************************************
+				$order++;
 						$labelitem= new label ($labelid, $title, $textbeifolder,  $sectionzaehler, $arrmitembeddedfiles, $folderid);
 						$arr_labels[]=$labelitem;
 						$labelid++;
+						$arr_allItems[$order]=$labelitem;
 						}
 						//$arr_files_embedded_label[]=$bild[1];//nur ein Element, kein Array
 						//************************************************************
-
+						*/
+					//************************************************************
+					if($iter==true)
+					{
+						if($sxi->getDepth()>$depth && $sxi->getDepth()=="3")
+						{
+							$hier[$v]=$title;
+							echo $sxi->getDepth() . " " . $title;
+							echo "<br>";
+							$v++;
+							//********************************************
+							if($textbeifolder!=="")
+							{
+								//*****************************************************
+								$order++;
+								$labelitem= new label ($labelid, $title, $textbeifolder,  $sectionzaehler, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;
+								$arr_allItems[$order]=$labelitem;
+							}
+							//********************************************
+							$sectionitem= new sectiondata($sectionzaehler, $title, $topitemid1);
+							$arr_parentids[]=$sectionitem;
+							$arr_parentids_2[]=$topitemid1;
+							$arr_parentids_3["$topitemid1"]=$sectionitem;
+							$sectionzaehler_par=$sectionzaehler;
+							$sectionzaehler++;
+							$topitemid1_par=$topitemid1;
+							//*****************************************************************
+							if($textbeifolder!=="")
+							{
+							
+								//$labelitem= new label ($labelid, $title, $textbeifolder,  $sectionzaehler, $arrmitembeddedfiles, $folderid);
+								//$arr_labels[]=$labelitem;
+								//$labelid++;
+							}
+							//********************************************************************************
+						}
+						elseif($sxi->getDepth()==$depth && $sxi->getDepth()=="3")
+						{
+							$hier[$v]=$title;
+							echo $sxi->getDepth() . " " . $title;
+							echo "<br>";
+							$v++;
+							//********************************************
+							if($textbeifolder!=="")
+							{
+								//*****************************************************
+								$order++;
+								$labelitem= new label ($labelid, $title, $textbeifolder,  $sectionzaehler, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;
+								$arr_allItems[$order]=$labelitem;
+							}
+							//********************************************
+							$sectionitem= new sectiondata($sectionzaehler, $title, $topitemid1);
+							$arr_parentids[]=$sectionitem;
+							$arr_parentids_2[]=$topitemid1;
+							$arr_parentids_3["$topitemid1"]=$sectionitem;
+							$sectionzaehler_par=$sectionzaehler;
+							$sectionzaehler++;
+							$topitemid1_par=$topitemid1;
+							//*****************************************************************
+						
+							//********************************************************************************
+						}
+						elseif($sxi->getDepth()<$depth && $sxi->getDepth()=="3")
+						{
+							$hier[$v]=$title;
+							echo $sxi->getDepth() . " " . $title;
+							echo "<br>";
+							$v++;
+							//********************************************
+							if($textbeifolder!=="")
+							{
+								//*****************************************************
+								$order++;
+								$labelitem= new label ($labelid, $title, $textbeifolder,  $sectionzaehler, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;
+								$arr_allItems[$order]=$labelitem;
+							}
+							//********************************************
+							$sectionitem= new sectiondata($sectionzaehler, $title, $topitemid1);
+							$arr_parentids[]=$sectionitem;
+							$arr_parentids_2[]=$topitemid1;
+							$arr_parentids_3["$topitemid1"]=$sectionitem;
+							$sectionzaehler_par=$sectionzaehler;
+							$sectionzaehler++;
+							$topitemid1_par=$topitemid1;
+							//*****************************************************************
+							
+							//********************************************************************************
+						}
+						elseif($sxi->getDepth()>depth && $sxi->getDepth()=="4")//Unterebene
+						{
+							$v_next=$v-1;
+							$hier['$v_next']['$v1']=$title;
+							echo $sxi->getDepth() . " " . "+" . $title;
+							echo "<br>";
+							$v1++;
+							//********************************************
+							if($textbeifolder!=="")
+							{
+								//*****************************************************
+								$order++;
+								$labelitem= new label ($labelid, $title, $textbeifolder,  $sectionzaehler, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;
+								$arr_allItems[$order]=$labelitem;
+							}
+							//********************************************
+							$arr_parentids_2[]=$topitemid1;
+							//**********************************************
+							$sectionitem= new sectiondata($sectionzaehler, $title, $topitemid1);
+							$arr_parentids[]=$sectionitem;
+							$arr_parentids_2[]=$topitemid1;
+							$arr_parentids_3["$topitemid1"]=$sectionitem;
+							$sectionzaehler_par=$sectionzaehler;
+							$sectionzaehler++;
+							$topitemid1_par=$topitemid1;
+							//**********************************************
+							//*****************************************************************
+							//if($textbeifolder!=="")
+							//{
+							/*			$textbeifolder_n= $title .  $textbeifolder;
+								$labelitem= new label ($labelid, $title, $textbeifolder_n,  $sectionzaehler, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;*/
+							//}
+							//********************************************************************************
+							/*$arr_parentids_3["$topitemid1_par"]->setOtherSections($topitemid1, $title);
+							//******************************sonderpage
+							//$title=$sxi->getDepth() . ": " . $title;
+							$pageitem= new page ($topitemid1, $title, " ", $textbeifolder, "", $sectionzaehler_par);
+							$arr_pages[]=$pageitem;
+							$arr_pages2["$topitemid1"]=$pageitem;
+							$order++;
+							$arr_allItems[$order]=$pageitem;*/
+							//**********************************************
+						}
+						elseif($sxi->getDepth()==$depth && $sxi->getDepth()=="4")//gleiche Ebene
+						{
+							
+							$hier['$v_next']['$v1']=$title;
+							echo "++" . $sxi->getDepth() . " " . $title;
+							echo "<br>";
+							$v1++;
+							$arr_parentids_2[]=$topitemid1;
+							//********************************************
+							if($textbeifolder!=="")
+							{
+								//*****************************************************
+								$order++;
+								$labelitem= new label ($labelid, $title, $textbeifolder,  $sectionzaehler, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;
+								$arr_allItems[$order]=$labelitem;
+							}
+							//********************************************
+							//*************************************************************
+							$sectionitem= new sectiondata($sectionzaehler, $title, $topitemid1);
+							$arr_parentids[]=$sectionitem;
+							$arr_parentids_2[]=$topitemid1;
+							$arr_parentids_3["$topitemid1"]=$sectionitem;
+							$sectionzaehler++;
+							$sectionzaehler_par=$sectionzaehler;
+							$topitemid1_par=$topitemid1;
+							//************************************************************
+							//$arr_parentids_3["$topitemid1_par"]->setOtherSections($topitemid1, $title);
+							//*****************************************************************
+								/*$textbeifolder_n= $title .  $textbeifolder;
+								$labelitem= new label ($labelid, $title, $textbeifolder_n,  $sectionzaehler, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;*/
+							//********************************************************************************
+								//******************************sonderpage
+							//$title=$sxi->getDepth() . ": " . $title;
+								/*$pageitem= new page ($topitemid1, $title, " ", $textbeifolder, "", $sectionzaehler_par);
+								$arr_pages[]=$pageitem;
+								$arr_pages2["$topitemid1"]=$pageitem;
+								$order++;
+								$arr_allItems[$order]=$pageitem;*/
+						}
+						elseif($sxi->getDepth()<$depth && $sxi->getDepth()=="4")//gleiche Ebene
+						{
+								
+							$hier['$v_next']['$v1']=$title;
+							echo "++" . $sxi->getDepth() . " " . $title;
+							echo "<br>";
+							$v1++;
+							//********************************************
+							if($textbeifolder!=="")
+							{
+								//*****************************************************
+								$order++;
+								$labelitem= new label ($labelid, $title, $textbeifolder,  $sectionzaehler, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;
+								$arr_allItems[$order]=$labelitem;
+							}
+							//********************************************
+							$arr_parentids_2[]=$topitemid1;
+							//*************************************************************
+							$sectionitem= new sectiondata($sectionzaehler, $title, $topitemid1);
+							 $arr_parentids[]=$sectionitem;
+							 $arr_parentids_2[]=$topitemid1;
+							 $arr_parentids_3["$topitemid1"]=$sectionitem;
+							 $sectionzaehler++;
+							 $sectionzaehler_par=$sectionzaehler;
+							 $topitemid1_par=$topitemid1;
+							//************************************************************
+							//$arr_parentids_3["$topitemid1_par"]->setOtherSections($topitemid1, $title);
+							//*****************************************************************
+								/*$textbeifolder_n= $title .  $textbeifolder;
+								$labelitem= new label ($labelid, $title, $textbeifolder_n,  $sectionzaehler, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;*/
+							//********************************************************************************
+								//******************************sonderpage
+							//$title=$sxi->getDepth() . ": " . $title;
+							/*	$pageitem= new page ($topitemid1, $title, " ", $textbeifolder, "", $sectionzaehler_par);
+								$arr_pages[]=$pageitem;
+								$arr_pages2["$topitemid1"]=$pageitem;
+								$order++;
+								$arr_allItems[$order]=$pageitem;*/
+						}
+						elseif($sxi->getDepth()>depth && $sxi->getDepth()=="5")//Unterebene
+						{
+							$v_next1=$v1-1;
+					
+							$hier['$v_next']['$v_next1']['$v2']=$title;
+							echo $sxi->getDepth() . " " . "+++" . $title . " section " . $sectionzaehler;
+							echo "<br>";
+							$v2++;
+							//********************************************
+							if($textbeifolder!=="")
+							{
+								//*****************************************************
+								$order++;
+								$labelitem= new label ($labelid, $title, $textbeifolder,  $sectionzaehler_par, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;
+								$arr_allItems[$order]=$labelitem;
+							}
+							//********************************************
+							$arr_parentids_2[]=$topitemid1;
+							$arr_parentids_3["$topitemid1_par"]->setOtherSections($topitemid1, $title);
+							//*****************************************************************
+							/*$textbeifolder_n= $title .  $textbeifolder;
+								$labelitem= new label ($labelid, $title, $textbeifolder_n,  $sectionzaehler, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;*/
+							//********************************************************************************
+								//******************************sonderpage
+							//$title=$sxi->getDepth() . ": " . $title;
+								/*$pageitem= new page ($topitemid1, $title, " ", $textbeifolder, "", $sectionzaehler_par);
+								$arr_pages[]=$pageitem;
+								$arr_pages2["$topitemid1"]=$pageitem;
+								$order++;
+								$arr_allItems[$order]=$pageitem;*
+						}
+						elseif($sxi->getDepth()==$depth && $sxi->getDepth()=="5")//gleiche Ebene
+						{
+							
+							$hier['$v_next']['$v_next1']['$v2']=$title;
+							echo $sxi->getDepth() . " " . "+++" . $title . " section " . $sectionzaehler;
+							echo "<br>";
+							$v2++;
+							$arr_parentids_3["$topitemid1_par"]->setOtherSections($topitemid1, $title);
+							$arr_parentids_2[]=$topitemid1;
+							//*****************************************************************
+								/*$textbeifolder_n= $title .  $textbeifolder;
+								$labelitem= new label ($labelid, $title, $textbeifolder_n,  $sectionzaehler, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;*/
+							//********************************************************************************
+								//******************************sonderpage
+							//$title=$sxi->getDepth() . ": " . $title;
+								/*$pageitem= new page ($topitemid1, $title, " ", $textbeifolder, "", $sectionzaehler_par);
+								$arr_pages[]=$pageitem;
+								$arr_pages2["$topitemid1"]=$pageitem;
+								$order++;
+								$arr_allItems[$order]=$pageitem;*/
+						}
+						elseif($sxi->getDepth()<$depth && $sxi->getDepth()=="5")//gleiche Ebene
+						{
+								
+							$hier['$v_next']['$v_next1']['$v2']=$title;
+							echo $sxi->getDepth() . " " . "+++" . $title . " section " . $sectionzaehler;
+							echo "<br>";
+							$v2++;
+							//********************************************
+							if($textbeifolder!=="")
+							{
+								//*****************************************************
+								$order++;
+								$labelitem= new label ($labelid, $title, $textbeifolder,  $sectionzaehler_par, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;
+								$arr_allItems[$order]=$labelitem;
+							}
+							//********************************************
+							$arr_parentids_3["$topitemid1_par"]->setOtherSections($topitemid1, $title);
+							$arr_parentids_2[]=$topitemid1;
+							//*****************************************************************
+							/*	$textbeifolder_n= $title .  $textbeifolder;
+								$labelitem= new label ($labelid, $title, $textbeifolder_n,  $sectionzaehler, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;*/
+							//********************************************************************************
+								//******************************sonderpage
+							//$title=$sxi->getDepth() . ": " . $title;
+							/*	$pageitem= new page ($topitemid1, $title, " ", $textbeifolder, "", $sectionzaehler_par);
+								$arr_pages[]=$pageitem;
+								$arr_pages2["$topitemid1"]=$pageitem;
+								$order++;
+								$arr_allItems[$order]=$pageitem;*/
+						}
+						elseif($sxi->getDepth()>depth && $sxi->getDepth()=="6")//Unterebene
+						{
+							$v_next2=$v2-1;
+						
+							$hier['$v_next']['$v_next1']['$v_next2']['$v3']=$title;
+							echo $sxi->getDepth() . " " . "++++" . $title;
+							echo "<br>";
+							$v3++;
+							//********************************************
+							if($textbeifolder!=="")
+							{
+								//*****************************************************
+								$order++;
+								$labelitem= new label ($labelid, $title, $textbeifolder,  $sectionzaehler_par, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;
+								$arr_allItems[$order]=$labelitem;
+							}
+							//********************************************
+							$arr_parentids_3["$topitemid1_par"]->setOtherSections($topitemid1, $title);
+							$arr_parentids_2[]=$topitemid1;
+							//*****************************************************************
+								/*$textbeifolder_n= $title .  $textbeifolder;
+								$labelitem= new label ($labelid, $title, $textbeifolder_n,  $sectionzaehler, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;*/
+							//********************************************************************************
+								//******************************sonderpage
+							//$title=$sxi->getDepth() . ": " . $title;
+								/*$pageitem= new page ($topitemid1, $title, " ", $textbeifolder, "", $sectionzaehler_par);
+								$arr_pages[]=$pageitem;
+								$arr_pages2["$topitemid1"]=$pageitem;
+								$order++;
+								$arr_allItems[$order]=$pageitem;*/
+						}
+						elseif($sxi->getDepth()==$depth && $sxi->getDepth()=="6")//gleiche Ebene
+						{
+								
+								$hier['$v_next']['$v_next1']['$v_next2']['$v3']=$title;
+							echo $sxi->getDepth() . " " . "++++" . $title;
+							echo "<br>";
+							//********************************************
+							if($textbeifolder!=="")
+							{
+								//*****************************************************
+								$order++;
+								$labelitem= new label ($labelid, $title, $textbeifolder,  $sectionzaehler_par, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;
+								$arr_allItems[$order]=$labelitem;
+							}
+							//********************************************
+							$v3++;
+							$arr_parentids_3["$topitemid1_par"]->setOtherSections($topitemid1, $title);
+							$arr_parentids_2[]=$topitemid1;
+							//*****************************************************************
+								/*$textbeifolder_n= $title .  $textbeifolder;
+								$labelitem= new label ($labelid, $title, $textbeifolder_n,  $sectionzaehler, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;*/
+							//********************************************************************************
+								//******************************sonderpage
+							//$title=$sxi->getDepth() . ": " . $title;
+							/*	$pageitem= new page ($topitemid1, $title, " ", $textbeifolder, "", $sectionzaehler_par);
+								$arr_pages[]=$pageitem;
+								$arr_pages2["$topitemid1"]=$pageitem;
+								$order++;
+								$arr_allItems[$order]=$pageitem;*/
+						}
+						elseif($sxi->getDepth()<$depth && $sxi->getDepth()=="6")//gleiche Ebene
+						{
+						
+							$hier['$v_next']['$v_next1']['$v_next2']['$v3']=$title;
+							echo $sxi->getDepth() . " " . "++++" . $title;
+							echo "<br>";
+							//********************************************
+							if($textbeifolder!=="")
+							{
+								//*****************************************************
+								$order++;
+								$labelitem= new label ($labelid, $title, $textbeifolder,  $sectionzaehler_par, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;
+								$arr_allItems[$order]=$labelitem;
+							}
+							//********************************************
+							$v3++;
+							$arr_parentids_3["$topitemid1_par"]->setOtherSections($topitemid1, $title);
+							$arr_parentids_2[]=$topitemid1;
+							//*****************************************************************
+						/*	$textbeifolder_n= $title .  $textbeifolder;
+								$labelitem= new label ($labelid, $title, $textbeifolder_n,  $sectionzaehler, $arrmitembeddedfiles, $folderid);
+								$arr_labels[]=$labelitem;
+								$labelid++;*/
+							//********************************************************************************
+								//******************************sonderpage
+							//$title=$sxi->getDepth() . ": " . $title;
+								/*$pageitem= new page ($topitemid1, $title, " ", $textbeifolder, "", $sectionzaehler_par);
+								$arr_pages[]=$pageitem;
+								$arr_pages2["$topitemid1"]=$pageitem;
+								$order++;
+								$arr_allItems[$order]=$pageitem;*/
+						}
+						//*****************************
+						$depth=$sxi->getDepth();
+					}
+						//**********************************************
+						if($iter==false)
+						{
 				$sectionitem= new sectiondata($sectionzaehler, $title, $topitemid1);
 				$arr_parentids[]=$sectionitem;
 				$arr_parentids_2[]=$topitemid1;
 				$sectionzaehler++;
+						}
+				//**********************
 			}//else pregmatch
 		}//if folderflag
 	

@@ -18,7 +18,8 @@
 var $res;
 var $parentid;
 var $section;
- 	 	 	
+ 	 var $description;	
+ 	 var $order; 	
 
  	function file($n,$i, $n2, $t, $r, $p, $s)
  	{
@@ -27,10 +28,9 @@ var $section;
 
  		$this->id=$i;
  		$this->name2=$n2;
- 		
- 		$this->title=xmlencoding($t);
-
-
+ 		 		$this->title=xmlencoding($t);
+ 		 		$this->order="";
+ 		$this->description="";
  		$this->res=$r;
  		$this->parentid=$p;
 $this->section=$s;
@@ -69,11 +69,31 @@ $this->section=$s;
  		
  		return $this->title;
  	}
- 	
+ 	function getDescription()
+ 	{
+ 			
+ 		return $this->description;
+ 	}
+ 	function setDescription($d)
+ 	{
+ 			
+ 		$this->description =$d;
+ 	}
  	function getRes()
  	{
  		
  		return $this->res;
+ 	}
+ 	
+ 	function getOrder()
+ 	{
+ 			
+ 		return $this->order;
+ 	}
+ 	function setOrder($o)
+ 	{
+ 	
+ 		$this->order =$o;
  	}
  }
 ?>

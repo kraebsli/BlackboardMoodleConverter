@@ -13,8 +13,7 @@ for($i=0; $i < count($arr_files); $i++)
 {
 	$fileid=$arr_files[$i]->getId();
 	$filename=$arr_files[$i]->getName();
-	//echo $filename;
-	//echo "<br>";
+
 	$parentid=$arr_files[$i]->getParentId();
 	$f2=$arr_files[$i]->getName2();//label NAME in .dat-Datei
 	//kann sein, dass kein XID enthalten ist, sondern direkt der Dateiname angegeben ist. Dann befindet sich die Datei
@@ -74,7 +73,7 @@ for($i=0; $i < count($arr_files); $i++)
 		else
 		{
 			$pdfcorrupt="1";
-			echo "The PDF File is  Corrupted.";
+			echo "The PDF File is  Corrupted: " . $filename_new;
 			echo "<br>";
 		}
 		fclose($fp);
@@ -245,12 +244,34 @@ $folderIDArray[]=$fileid;
 			}
 	elseif($modus=="multiplefolders")
 	{
+		$mod="mod_folder";
+		$contextid_help=$parentid;
+		for($z=0;$z<count($helparray_nonfolderfiles); $z++)
+		{
+			/*echo "fileid " . $fileid;
+			echo "<br>";
+			echo "helparray " . $helparray_nonfolderfiles[$z];
+			echo "<br>";
+			*/
+			
+			
+			if($fileid==$helparray_nonfolderfiles[$z])
+			{
+				
+				$mod="mod_resource";
+				$contextid_help=$fileid;
+				break;
+			}
+			
+		}
 		
+		//echo $filename_new;
+		//echo "<br>";
 $folderIDArray[]=$fileid;
 			$xmlfile2 .="<file id=\"$fileid\">
 			<contenthash>" . $contenthash . "</contenthash>
-    <contextid>" . $section . "</contextid>
-    <component>mod_folder</component>
+    <contextid>" . $contextid_help . "</contextid>
+    <component>" . $mod . "</component>
     <filearea>content</filearea>
     <itemid>0</itemid>
     <filepath>/</filepath>

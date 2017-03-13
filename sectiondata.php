@@ -15,7 +15,7 @@ var $id;
 var $title;
 var $parentid;
 var $available;
- 	 	 	
+var $othersections;
 
  	function sectiondata($i, $t, $p)
  	{
@@ -25,7 +25,7 @@ var $available;
  		$this->title=$t;
  			
  		$this->parentid=$p;
- 		
+ 		$this->othersections=array();
 	//$this->available=$a;
  	}
 
@@ -51,6 +51,15 @@ var $available;
  		
  		return $this->available;
  	}
- 
+ 	function setOtherSections($s, $t) {
+ 		$sectionpair= array();
+ 		$sectionpair[]=$s;
+ 		$sectionpair[]=$t;
+ 		$this->othersections[]=$sectionpair;
+ 	}
+ 	function getOtherSections() {
+ 	
+ 		return	$this->othersections;
+ 	}
  }
 ?>

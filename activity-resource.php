@@ -10,15 +10,28 @@ for($i=0; $i < count($arr_files); $i++)
 	$fileid=$arr_files[$i]->getId();
 	$filename=$arr_files[$i]->getName();
 	$title=$arr_files[$i]->getTitle();
+	$description=$arr_files[$i]->getDescription();
+
 if($title==$filename){
 	$title="";
 	$showfileandtitle=$filename;
+	
 }
 else 
 {
 	if($title!=="")
 	{
-$showfileandtitle=$title . ": " . $filename;
+//$showfileandtitle=$title . ": " . $filename;
+$showfileandtitle=$title;
+if(strlen($showfileandtitle)>220)
+{
+	
+	$showfileandtitle=$filename;
+}
+else 
+{
+	
+}
 	}
 	else 
 	{
@@ -96,11 +109,11 @@ $showfileandtitle=$title . ": " . $filename;
 	$xmlfile5.="<activity id=\"" . $i . "\" modulename=\"resource\" contextid=\"" . $fileid . "\" moduleid=\"" . $fileid ."\">";
 	$xmlfile5.="<resource id=\"" . $i . "\"><displayoptions>a:2:{s:10:\"printintro\";i:1;s:12:\"printheading\";i:0;}</displayoptions>
 <introformat>1</introformat>" .
-"<intro></intro>
+"<intro>".$description ."</intro>
 <timemodified>" . $aktuellesdatum . "</timemodified>
 <revision>0</revision>
 <legacyfileslast>$@NULL@$</legacyfileslast>
-<display>0</display>
+<display>3</display>
 <legacyfiles>2</legacyfiles>
 <tobemigrated>0</tobemigrated>
 <name>" . $showfileandtitle . "</name><filterfiles>0</filterfiles><intro/></resource></activity>";

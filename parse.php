@@ -7,7 +7,7 @@
  * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
  * */
 $modus1= $_POST['var'];
-@ini_set("memory_limit",'4116M');
+@ini_set("memory_limit",'8232M');
 set_time_limit (0);
 include("uploaddir.php");
 include("functions.php");
@@ -33,6 +33,7 @@ include("fileembedded.php");
 include("fileembedded_quiz.php");
 include("fileembedded_quiz_drag.php");
 include("page.php");
+include("wiki.php");
 include("label.php");
 include("link.php");
 include("sectiondata.php");
@@ -40,6 +41,10 @@ include("regex.php");
 //*******************************************************************************
 include("manifest-bb-data.php");
 
+if($iter==true){
+	
+	//$modus="multiplefolders";
+}
 //coursetitle
 //***********************************************************
 $datfiletitle= $dir . "/res00001.dat"; //title
@@ -59,7 +64,7 @@ else
 	$courseshortname=$coursetitle;
 }
 include("banner.php");
-include("files-bb-data.php");
+//include("files-bb-data.php");
 
 //******************************************************
 //***********************************************Questions
@@ -67,6 +72,7 @@ include("files-bb-data.php");
  include("questions2.php");
 //*********************************************************
  include("pages-links-bb-data.php");
+include("quiz_options.php");
  //***********************************
 $filenumber= count($arr_files);
 
@@ -107,7 +113,7 @@ include("label_xml.php");
 
 //******************************
 //Sections
-recurse_copy("moodle_src/sections",$direxport . "/sections");
+//recurse_copy("moodle_src/sections",$direxport . "/sections");
 include("section.php");
 //**************************************************************
 //Course
@@ -123,6 +129,8 @@ recurse_copy("moodle_src/course",$direxport . "/course");
  echo "<br>";
 echo "you will get " . $sectionzaehler . " sections in Moodle with this course.";
 include("zip.php");
+echo "<br>";
+echo "<br>";
 echo "<br>";
 echo "Submit only if you corrected matching questions.";
 echo "<br>";
