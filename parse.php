@@ -17,13 +17,13 @@ include("unzip.php");
 //*****************************************************************
  function parse($dir, $direxport, $ulf, $d, $stamp, $version, $modus)
  {
- 	echo "<form method=\"post\" action=\"parse.php\">";
+ 	/*echo "<form method=\"post\" action=\"parse.php\">";
  	echo "<input type=\"hidden\" name=\"nochmal\" value=\"1\">";
  	echo "<input type=\"hidden\" name=\"neuerpfad\" value=\"" . $dir . "\">";
  	echo "<input type=\"hidden\" name=\"neuerpfadexport\" value=\"" . $direxport . "\">";
  	echo "<input type=\"hidden\" name=\"uploadfile\" value=\"" . $ulf . "\">";
  	echo "<input type=\"hidden\" name=\"dateiname\" value=\"" . $d . "\">";
- 	echo "<input type=\"hidden\" name=\"modus1\" value=\"" . $modus . "\">";
+ 	echo "<input type=\"hidden\" name=\"modus1\" value=\"" . $modus . "\">";*/
  	
  	
 include("config.php");
@@ -34,8 +34,10 @@ include("fileembedded_quiz.php");
 include("fileembedded_quiz_drag.php");
 include("page.php");
 include("wiki.php");
+include("wikipage.php");
 include("label.php");
 include("link.php");
+include("survey.php");
 include("sectiondata.php");
 include("regex.php");
 //*******************************************************************************
@@ -70,6 +72,7 @@ include("banner.php");
 //***********************************************Questions
  include("questions.php");
  include("questions2.php");
+ include ("surveyitems.php");
 //*********************************************************
  include("pages-links-bb-data.php");
 include("quiz_options.php");
@@ -106,11 +109,12 @@ include("quiz_xml.php");
 
 //****************************************************
 include("activity-page.php");
+include("activity-wiki.php");
 //*********************links
 include("link_xml.php");
 //******************************labels
 include("label_xml.php");
-
+include("survey_xml.php");
 //******************************
 //Sections
 //recurse_copy("moodle_src/sections",$direxport . "/sections");
@@ -127,9 +131,9 @@ recurse_copy("moodle_src/course",$direxport . "/course");
   copy("moodle_src/scales.xml",$direxport . "/scales.xml");
  //***********************************************************
  echo "<br>";
-echo "you will get " . $sectionzaehler . " sections in Moodle with this course.";
+echo "you will get " . $sectionzaehler . " sections in Moodle with this course and " . $allfiles . " files.";
 include("zip.php");
-echo "<br>";
+/*echo "<br>";
 echo "<br>";
 echo "<br>";
 echo "Submit only if you corrected matching questions.";
@@ -137,7 +141,7 @@ echo "<br>";
 echo "<br>";
 echo "<br>";
 echo "<INPUT TYPE=\"submit\" name=\"submit\" />";
-echo "</form>";
+echo "</form>";*/
    }//ende function parse
    
    //**************************************************

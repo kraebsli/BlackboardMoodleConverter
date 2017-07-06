@@ -4,24 +4,36 @@
  * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
  * */
 //directories für folder
-for($i=0; $i < count($arr_folder_simple); $i++)
+if($allfiles>$fileslimit)
 {
-$folderid=$arr_folder_simple[$i]->getId();//????
-$folderfiles=$arr_folder_simple[$i]->getFiles();
-$parentid2=$arr_folder_simple[$i]->getParentId();
-$description=$arr_folder_simple[$i]->getDescription();
-$section=checkParentid($folderid, $arr_parentids, $arr);
-$section=$section+$sectionstart;
-if (count($folderfiles)>1)
-{
-
-
-
-$foldername=$arr_folder_simple[$i]->getName();
-
-
-	
-		$folderpfad=$direxport . "/activities/folder_". $folderid;
+ for($i=0; $i < count($arr_parentids); $i++)
+	{
+		$sectionsequence=$arr_parentids[$i]->getSectionorder();
+		for($j=0;$j < count($sectionsequence); $j++)
+		{
+			
+//****************************************************
+				for($k=0; $k <= $order; $k++)
+				{
+			
+					if(isset($arr_allItems[$k]))
+					{
+				if($arr_allItems[$k]->getId()==$sectionsequence[$j])
+				{
+					if ($arr_allItems[$k] instanceof folder) {
+						
+						$foldername=$arr_allItems[$k]->getName();
+						
+						$folderid=$arr_allItems[$k]->getId();
+						
+						$folderfiles=$arr_allItems[$k]->getFiles();
+						$description=$arr_allItems[$k]->getDescription();
+						$parentid2=$arr_allItems[$k]->getParentId();
+						     $section=$arr_parentids[$i]->getId();
+						$section=$section+$sectionstart;
+						if(count($folderfiles)>1)
+						{
+$folderpfad=$direxport . "/activities/folder_". $folderid;
 
 		mkdir($folderpfad, 0700);
 		$pfad2= $folderpfad . "/grades.xml";
@@ -52,10 +64,10 @@ $foldername=$arr_folder_simple[$i]->getName();
 		//****************inforef.xml*****************************
 		$xmlfile7='<?xml version="1.0" encoding="'.$charset.'"?>'."\n";
 		$xmlfile7.="<inforef><fileref>";
-	for($j=0; $j<count($folderfiles); $j++)
+	for($m=0; $m<count($folderfiles); $m++)
 	{
 
-	$folderID=$folderfiles[$j]->getId();
+	$folderID=$folderfiles[$m]->getId();
 	$xmlfile7.="<file><id>" . $folderID . "</id> </file>";
 		}
 	$xmlfile7.="</fileref></inforef>";
@@ -93,21 +105,46 @@ $foldername=$arr_folder_simple[$i]->getName();
  $xmlfile7="";
  $xmlfile8="";
 }
-else 
-	
-{//files as resources
+}
+}
+					}
+				}
+		}
+	}
+}
+//files as resources
 	//*******************************************************************************************
-for($b=0; $b<count($folderfiles); $b++)
-{
-
-$fileid=$folderfiles[$b]->getId();
-	//$fileid=$arr_files[$i]->getId();
-	$filename=$folderfiles[$b]->getName();
-	$description=$folderfiles[$b]->getDescription();
-	$title=$folderfiles[$b]->getTitle();
+ for($i=0; $i < count($arr_parentids); $i++)
+	{
+		$sectionsequence=$arr_parentids[$i]->getSectionorder();
+		for($j=0;$j < count($sectionsequence); $j++)
+		{
+			
+//****************************************************
+				for($k=0; $k <= $order; $k++)
+				{
+					if(isset($arr_allItems[$k]))
+					{
+				if($arr_allItems[$k]->getId()==$sectionsequence[$j])
+				{
+					if ($arr_allItems[$k] instanceof file) {
+							
+						
+						$fileid=$arr_allItems[$k]->getId();
+						for($f=0;$f<count($helparray_nonfolderfiles); $f++)
+						{
+						if($helparray_nonfolderfiles[$f]==$fileid)
+						{
+						$filename=$arr_allItems[$k]->getName();
+						//$filename=xmlencoding($filename);
+						$title=$arr_allItems[$k]->getTitle();
+						$description=$arr_allItems[$k]->getDescription();
+						$section=$arr_allItems[$k]->getSection();
+						$section=$section+$sectionstart;
+						//**************************************
 	if($title==$filename){
 		$title="";
-		$showfileandtitle=$filename;
+		$showfileandtitle=$title;
 	}
 	else
 	{
@@ -125,7 +162,7 @@ $fileid=$folderfiles[$b]->getId();
 		}
 		else
 		{
-			$showfileandtitle=$filename;
+			$showfileandtitle=$title;
 		}
 	}
 	//**************************************
@@ -196,8 +233,8 @@ $fileid=$folderfiles[$b]->getId();
 	//***************************************************************
 	//****************resource.xml*****************************
 	$xmlfile5='<?xml version="1.0" encoding="'.$charset.'"?>'."\n";
-	$xmlfile5.="<activity id=\"" . $i . "\" modulename=\"resource\" contextid=\"" . $fileid . "\" moduleid=\"" . $fileid ."\">";
-	$xmlfile5.="<resource id=\"" . $i . "\"><displayoptions>a:2:{s:10:\"printintro\";i:1;s:12:\"printheading\";i:0;}</displayoptions>
+	$xmlfile5.="<activity id=\"" . $k . "\" modulename=\"resource\" contextid=\"" . $fileid . "\" moduleid=\"" . $fileid ."\">";
+	$xmlfile5.="<resource id=\"" . $k . "\"><displayoptions>a:2:{s:10:\"printintro\";i:1;s:12:\"printheading\";i:0;}</displayoptions>
 <introformat>1</introformat>" .
 	"<intro>" . $description . "</intro>
 <timemodified>" . $aktuellesdatum . "</timemodified>
@@ -206,7 +243,7 @@ $fileid=$folderfiles[$b]->getId();
 <display>3</display>
 <legacyfiles>2</legacyfiles>
 <tobemigrated>0</tobemigrated>
-<name>" . $showfileandtitle . "</name><filterfiles>0</filterfiles><intro/></resource></activity>";
+<name>" . $showfileandtitle . "</name><filterfiles>0</filterfiles></resource></activity>";
 	$title="";
 	//************************
 	$file5 = fopen($pfad . "/resource.xml","w");
@@ -215,6 +252,12 @@ $fileid=$folderfiles[$b]->getId();
 	//***************************************************************
 }
 }
-}
+					}
+				}
+					}
+				}
+		}
+	}
+
 
 ?>

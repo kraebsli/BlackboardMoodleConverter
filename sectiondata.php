@@ -16,6 +16,7 @@ var $title;
 var $parentid;
 var $available;
 var $othersections;
+var $sectionorder;
 
  	function sectiondata($i, $t, $p)
  	{
@@ -26,6 +27,7 @@ var $othersections;
  			
  		$this->parentid=$p;
  		$this->othersections=array();
+ 		$this->sectionorder=array();
 	//$this->available=$a;
  	}
 
@@ -60,6 +62,50 @@ var $othersections;
  	function getOtherSections() {
  	
  		return	$this->othersections;
+ 	}
+ 	function setSectionorder($s) {
+
+ 		$this->sectionorder[]=$s;
+ 	}
+ 	function getSectionorder() {
+ 			
+ 		return $this->sectionorder;
+ 	}
+ 	function insertSection($s, $t) {
+ 		
+ 		//$this->sectionorder[]=$t;
+ 		$p=$this->sectionorder;
+ 		$new_ar=array();
+ 		$j=0;
+ 		if(count($p)>0)
+ 		{
+ 		for($i=0;$i<count($p);$i++)
+ 		{
+ 			
+ 		
+ 			if($p[$i]==$s)
+ 			{
+ 			
+ 			$new_ar[$j]=$p[$i];
+ 			$j++;
+ 			$new_ar[$j]=$t;
+ 			$j++;
+ 				
+ 			
+ 				
+ 			}
+ 			else 
+ 			{
+ 	$new_ar[$j]=$p[$i];
+ 			$j++;
+ 			}
+ 		}//for
+ 		if(count($new_ar)>0)
+ 		{
+ 			$this->sectionorder=$new_ar;
+ 		}
+ 		}//if
+ 		
  	}
  }
 ?>

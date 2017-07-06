@@ -39,8 +39,10 @@ $arrmitembeddedfiles=array();
 $arrmitembeddedfiles[]=$bild[1];
 $labelitem= new label ($labelid, "Banner", $bild[0],  "1", $arrmitembeddedfiles, $labelid);
 $arr_labels[]=$labelitem;
+$arr_parentids[0]->setSectionorder($labelid);
 $labelid++;
 $arr_files_embedded_label[]=$bild[1];//nur ein Element, kein Array
+
 $order++;
 $arr_allItems[$order]=$labelitem;
 

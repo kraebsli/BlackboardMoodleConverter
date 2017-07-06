@@ -31,9 +31,9 @@ else
 	echo "<br>";
 	echo "Diese Datei kann in Moodle wiederhergestellt werden, entweder in einem bestehenden oder einem neuen Kurs.";
 
-	/*rmr($dir);
+	rmr($dir);
 	unlink($ulf);
-	 rmr("bb-kurs/export/activities");
-	rmr("bb-kurs/temp");*/
+	// rmr("bb-kurs/export/activities");
+	//rmr("bb-kurs/temp");
 }//ende else
 ?>

@@ -5,14 +5,33 @@
  * */
 $sectionpfad=$direxport . "/sections";
 mkdir($sectionpfad, 0700);
-$sequence="";
+
  for($i=0; $i < count($arr_parentids); $i++)
 {
-	
+	$sequence="";
 			$sectionid=$arr_parentids[$i]->getId();
 			$sectionheadline=$arr_parentids[$i]->getName();
 			$sectionavailable=$arr_parentids[$i]->getVisible();
-			for($j=0; $j <= count($arr_allItems); $j++)
+			$sectionorder=$arr_parentids[$i]->getSectionorder();
+			$t=0;
+			for($j=0; $j< count($sectionorder); $j++)
+			{
+				$t=$j+1;
+			if($t==count($sectionorder))
+			{
+				$sequence.=$sectionorder[$j];
+	
+			}
+			else 
+			{
+				if($sectionorder[$j]!=="")
+				{
+			$sequence.=$sectionorder[$j].",";
+				}
+			}
+			}
+			
+		/*	for($j=0; $j <= count($arr_allItems); $j++)
 			
 	{
 		if ($arr_allItems[$j]  instanceof file ||$arr_allItems[$j] instanceof label ||$arr_allItems[$j] instanceof page ||$arr_allItems[$j] instanceof link) {
@@ -33,7 +52,9 @@ $itemsec=$arr_allItems[$j]->getSection();
 		}
 	
 	}
-	}
+	
+	}*/
+			
 		/*	if($sectionavailable=="true")
 			{
 				$sectionavailable="1";
@@ -46,7 +67,7 @@ $itemsec=$arr_allItems[$j]->getSection();
 			}*/
 			$sectionheadline=xmlencoding($sectionheadline);
 		$sectionid=$sectionid+$sectionstart;
-	
+
 $sectionpfad=$direxport . "/sections/section_" . $sectionid;
 
 	if(is_dir($sectionpfad))
@@ -55,9 +76,10 @@ $sectionpfad=$direxport . "/sections/section_" . $sectionid;
 	}
 	else 
 	{
+		
 		if($modus=="multiplefolders")
 		{
-			$sequence="";
+			//$sequence="";
 		}
 mkdir($sectionpfad, 0700);
 	$pfad_section_inforef= $sectionpfad . "/inforef.xml";

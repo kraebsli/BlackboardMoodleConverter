@@ -9,7 +9,7 @@ foreach ($daten->resources->resource as $res) {
 	$test=$res_single->assessment;
 	$seltype="";
 	$asstype=trim($test->assessmentmetadata->bbmd_assessmenttype);
-	if($asstype=="Test" or $asstype=="Survey")
+	if($asstype=="Test")
 	{
 	if(isset($test['title'])&& $test['title']!=="")
 	{
@@ -34,15 +34,14 @@ foreach ($daten->resources->resource as $res) {
 		$quizdescription=$beschreibung . "<br>" . $anweisung;
 		$quizdescription=xmlencoding($quizdescription);
 		
-		
+	
 		//section->section->selection_ordering->selection->or_selection->selection_metadata
 		//section->section->selection_ordering->selection
 		$seltype=$test->section->section->selection_ordering->selection;
 $seltype=trim($seltype['seltype']);
 //if($seltype!=="All")//??????????????????
 //{
-echo "sdlfjsdlfj sdlfjsdklf j" . $categoryid;
-echo "<br>";
+
 			$quiz_p= new quiz($quiz2,$quizid,$contextid, $categoryid, $gesamtscore, $quizdescription);
 			$categoryid++;
 			$quiz2="";

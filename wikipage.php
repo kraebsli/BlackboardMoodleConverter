@@ -7,45 +7,36 @@
  * makes use of Moodle - http://moodle.org/
  * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
  * */
- class wiki
+ class wikipage
  
  {
 
 var $id;
 var $title;
 var $text;
-var $desc;
-var $pages;
-var $section;
-
+var $datum;
+var $embedar;
  	 	 	
 
- 	function wiki($i, $t, $te,  $s)
+ 	function wikipage($i, $t, $te, $d)
  	{
- 	$this->pages=array();
+ 	$this->embedar=array();
  		$this->id=$i;
-
  		$this->title=$t;
+ 	 		$this->text=$te;
+ 		$this->datum=$d;
 
- 		$this->desc=$te;
- 		$this->embedar=$em;
- 		
-$this->section=$s;
  	}
   function getAr()
  	{
  		
  		return $this->embedar;
  	}
- function getSection()
+
+ 	function getDatum()
  	{
  		
- 		return $this->section;
- 	}
- 	function getDescription()
- 	{
- 		
- 		return $this->desc;
+ 		return $this->datum;
  	}
  	
  	function getId()
@@ -64,16 +55,6 @@ $this->section=$s;
  	{
  		
  		return $this->text;
- 	}
- 	function setPages($page)
- 	{
- 			
- 		$this->pages[]=$page;
- 	}
- 	function getPages()
- 	{
- 			
- 		return $this->pages;
  	}
  }
 ?>

@@ -564,4 +564,54 @@ function checkParentid2($parentid,  $arfolder)//ar mit sectionobjects
 
 	return $sectionid;
 }
+function otherSection($parentid,  $arfolder, $arrinter)//ar mit sectionobjects
+{
+
+$ids=array();
+
+	if(isset($arfolder["$parentid"]))
+	{
+			
+		$ids="";
+			
+		
+	}
+	else
+	{
+		
+		foreach($arfolder as $value)//value is section
+		{
+			
+			$p2=$value->getOtherSections();
+			for($i=0;$i<count($p2);$i++)
+			{
+				if($p2[$i][0]==$parentid)//new section identified
+				{
+					
+				for($t=0;$t<count($arrinter); $t++)
+				{
+					
+					$parentid_inter=$arrinter[$t]->getParentid();//parentid of new headline
+					if($parentid_inter==$parentid)
+					{
+				
+					$id_inter=$arrinter[$t]->getId();
+					$ids[]=	$id_inter;
+					//echo "idinter" . $id_inter;
+					//echo "<br>";
+					$parentid_section=$value->getParentId();
+					$ids[]=	$parentid_section;
+					//echo "        parentid_section" . $parentid_section;
+					//echo "<br>";
+					break;
+					}
+				}
+				}
+			}
+		}
+}
+	//****************sectionobject finden
+
+	return $ids;
+}
 ?>

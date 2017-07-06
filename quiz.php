@@ -92,6 +92,14 @@
  		
  		return $this->description;
  	}
+ 	function updateDescription($ud)
+ 	{
+ 			
+ 		 $this->description=$ud . "<br><br>" . $this->description;
+ 		 $this->description= xmlencoding($this->description);
+ 		// echo $this->name . "<br>" . $this->description . "<br>";
+ 
+ 	}
  	function setSectionid($s)
  	{
  			
