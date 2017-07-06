@@ -13,7 +13,7 @@
 <title>Blackboard-Moodle-Converter</title>
 </head> 
 <body>
-<h2>Blackboard->Moodle Converter 2.6 BETA</h2>
+<h2>Blackboard->Moodle Converter 3.1 BETA</h2>
 <h3>Export and convert Blackboard courses</h3>
 <p>Source: Blackboard 9.1 SP 14</p>
 <p>Target: Moodle 3.1.1</p>
@@ -30,6 +30,6 @@
      <input type='hidden' name='var' value="multiplefolders"/> 
     <br><input type="submit" value="Upload file" />
 </form>
-<p>Last update: 13.3.2017, Kathrin Braungardt, braungardt@uv.rub.de</p>
+<p>Last update: 23.06.2017, Kathrin Braungardt, braungardt@uv.rub.de</p>
 </body>
 </html>
