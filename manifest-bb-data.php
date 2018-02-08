@@ -37,9 +37,9 @@ $arr_files_embedded_wiki=array();//Files
 $helparray_nonfolderfiles=array();
 $arr_pages=array();
 $arr_wikis=array();
+$arr_forums=array();
 $arr_links=array();
 $arr_labels=array();
-$survey_ar=array();
 $folderIDArray=array();
 $arr_parentids=array();//sections
 $arr_parentids_2=array();//for parentids
@@ -221,7 +221,7 @@ if($topitemref1!="")
 					//$section=checkParentid($folderid, $arr_parentids, $arr);//gibt sectionid zurück
 					$textbeifolder=$topitem_single1->BODY->TEXT;
 					$textbeifolder=trim($textbeifolder);
-			
+			echo $textbeifolder;
 					//************************************
 					$bild=bild($textbeifolder, $dir, $folderid, $topitemref1, $direxport, true);//array mit img-infos
 					//das muss bei moodle stehen: ><img src="@@PLUGINFILE@@/tab2.jpg" width="300" height="200" />
@@ -376,6 +376,7 @@ if($topitemref1!="")
 							$arr_parentids_3["$topitemid1"]->setSectionorder($folderid);
 							if($textbeifolder!=="")
 							{
+								
 								//*****************************************************
 			$order++;
 								$labelitem= new label ($labelid, $title, $textbeifolder,  $sectionzaehler_par, $arrmitembeddedfiles, $folderid);

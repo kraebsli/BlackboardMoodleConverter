@@ -487,12 +487,12 @@ $arrmitembeddedfiles2=array();
 			//***********************************************************
 			if($descr_var==true)//description with item
 			{
-			if($countfiles>0 && $countfiles <3)
+			if($countfiles>0 && $countfiles <2)
 			{
 				
 			$fileitem->setDescription($pagetext);
 }
-elseif($countfiles>2 )
+elseif($countfiles>=2 )
 			{
 				
 				if(isset($folderitem))
