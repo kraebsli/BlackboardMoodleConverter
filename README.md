@@ -4,6 +4,7 @@ Blackboard-Moodle-Converter
 @copyright  Kathrin Braungardt, Ruhr-Universität Bochum
 @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
+This is a course converter which converts Blackboard courses to Moodle courses.
 
 Converted are documents, content from text elements, links, YouTube mashups and tests.
 
