@@ -46,7 +46,7 @@ function internerlink($t, $pid, $res, $s, $dir)
 	//******************************************************
 	for ($i=0; $i<count($treffer[0]); $i++)
 	{
-		
+		$arr_files=array();
 	
 	//$bilddaten= array();
 	$fname= array();
@@ -168,6 +168,7 @@ function bild($bild, $dir, $pid, $res, $direxport, $mod_label)
 
 $replaced=$bild;
 	$bildobjekt= array();
+	$bildertemp= array();
 	//echo htmlentities($bild);
 	//echo "<br><br>";
 	//**************************************************
@@ -246,7 +247,14 @@ $xid_bild=trim($treffer5temp[1], '"');
 		if(count($treffer4)>0 or count($treffer5)>0)
 		{
 		
-				
+		if(in_array($fname[1], $bildertemp))
+		{
+		}
+else
+{	
+if(isset($fname[1])&&$fname[1]!=="")
+{
+	$bildertemp[]=$fname[1];
 $bilddaten[3]=$fname[1];
 	//***********************************************************
 	$oldname=$fname[0];
@@ -287,7 +295,8 @@ $bilddaten[3]=$fname[1];
         $arr_files_embedded_label[]=$fileitem;
         }
 
-
+}
+}
 
 //******************************************************************
 	//$pattern="`".$treffer[$i] . "`";
@@ -329,11 +338,12 @@ function bild2($bild, $dir, $pid, $res, $direxport, $ct, $fa)//für fragen wird d
 
 	//fa ist filearea, bei quizzes answer und question
 	$replaced=$bild;
+
 	$bildobjekt= array();
 	//echo htmlentities($bild);
 	//echo "<br><br>";
 //**************************************************
-	$suchmuster='/<img[^>]+>/i';
+	$suchmuster="/<img[^>]+>/i";
 	preg_match($suchmuster, $bild, $treffer);
 	for ($i=0; $i<count($treffer); $i++)
 	{
@@ -363,7 +373,7 @@ function bild2($bild, $dir, $pid, $res, $direxport, $ct, $fa)//für fragen wird d
 			$suchmuster_xid='/xid-\d+/';
 		$xid=preg_match($suchmuster_xid, $treffer[$i], $treffer4);
 		//echo "<br>";
-		//echo $treffer4[0];
+		//echo "xid                          " . $treffer4[0];
 		//********************************************
 		if(isset($treffer4[0]) && $treffer4[0]!=="")
 		{
@@ -422,6 +432,7 @@ $bilddaten[3]=$fname[1];
 	}
 	//$replaced=preg_replace('#\##', "x", $bild);
 	$replaced=preg_replace($suchmuster, $replacement, $replaced);
+	
 	//echo "<br>";
 	//echo "replactes zeug: ";
 	//echo "<br>";
@@ -447,7 +458,9 @@ function bildinlabel($bild, $dir, $pid, $res, $direxport)
 	$bildobjekt= array();
 //***************************************
 $fname=VerzeichnisDurchsuchen3($dir, $bild);
-$bildobjekt[3]=$fname[1];
+if(isset($fname[1])&&$fname[1]!=="")
+{
+	$bildobjekt[3]=$fname[1];
 		//********************************************
 		$oldname=$fname[0];//pfad ist schon übergeben
 	
@@ -477,12 +490,24 @@ $bildobjekt[3]=$fname[1];
         //******************************************************
 	$fileitem= new fileembedded ($fname[1], $pid,$fname[0], $res, $pid, $contenthash, $filesize);
 	
-$bannertext="<p><img src=\"@@PLUGINFILE@@/" . $fname[1] . "\"  class=\"img-responsive\" /></p><p>Ihr Blackboard-Kurs wurde erfolgreich in Moodle wiederhergestellt. Bitte
-beachten Sie, dass nicht alle Elemente aus Blackboard uebernommen werden koennen.</p>";
+$bannertext="<p><img src=\"@@PLUGINFILE@@/" . $fname[1] . "\"  class=\"img-responsive\" /></p>";
 $bannertext=xmlencoding($bannertext);
 
 $bildobjekt[0]=$bannertext;
 $bildobjekt[1]=$fileitem;
+}
+else
+{
+	$bannertext="Course banner could not be restored. It was not in the archive.";
+$bannertext=xmlencoding($bannertext);
+$bildobjekt[0]=$bannertext;
+$bildobjekt[1]="";
+	
+}
+
+
+			
+
 return $bildobjekt;
 //******************************************************************
 //*********************************************************************
@@ -578,6 +603,34 @@ $bildobjekt=array();
 	return $bildobjekt;
 }
 //****************************************************************
-
+ function zipData($source, $destination) {
+	 echo $source;
+        if (extension_loaded('zip')) {
+            if (file_exists($source)) {
+                $zip = new ZipArchive();
+                if ($zip->open($destination, ZIPARCHIVE::CREATE)) {
+                    //$source = realpath($source);
+                    if (is_dir($source)) {
+                        $iterator = new RecursiveDirectoryIterator($source);
+                        // skip dot files while iterating 
+                        $iterator->setFlags(RecursiveDirectoryIterator::SKIP_DOTS);
+                        $files = new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::SELF_FIRST);
+                        foreach ($files as $file) {
+                            //$file = realpath($file);
+                            if (is_dir($file)) {
+                                $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
+                            } else if (is_file($file)) {
+                                $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
+                            }
+                        }
+                    } else if (is_file($source)) {
+                        $zip->addFromString(basename($source), file_get_contents($source));
+                    }
+                }
+                return $zip->close();
+            }
+        }
+        return false;
+    }
 
 ?>

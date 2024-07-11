@@ -2,6 +2,7 @@
 //$contextid=10;
 //$categoryid=1;
 $i=0;
+$zaehler=0;
 foreach ($daten->resources->resource as $res) {
 	
 	$resident=$res['identifier'];
@@ -9,6 +10,7 @@ foreach ($daten->resources->resource as $res) {
 	$res_single=simplexml_load_file($resdat);
 	$test=$res_single->assessment;
 	$seltype="";
+	if(isset($test->assessmentmetadata->bbmd_assessmenttype))
 	$asstype=trim($test->assessmentmetadata->bbmd_assessmenttype);
 	if($asstype=="Survey")
 	{
@@ -139,10 +141,13 @@ $seltype=trim($seltype['seltype']);
 		else
 		{
 	
-			echo "<br>";
-			echo "<br>";
-			echo "Frage " . $questiontitle . " (Fragetyp ". $q . " nicht konvertiert)";
-			echo "<br>";
+			//echo "<br>";
+			//echo "<br>";
+			//$exportlogData.= "Question " . $questiontitle . " (question type ". $q . " not converted)";
+			//echo "<br>";
+			$exportlogData.="\n";
+			$exportlogData.= "Question " . $questiontitle . " of question type ". $q . " not converted.";
+			$exportlogData.="\n";
 		}
 	}//foreach question
 	}
@@ -155,10 +160,13 @@ $seltype=trim($seltype['seltype']);
 	}//title
 	}//asstype
 }//foreach
-echo "<br>";
-echo "<br>";
-echo $zaehler . " Fragen konvertiert.";
-echo "<br>";
-echo "<br>";
+//echo "<br>";
+//echo "<br>";
+//echo $zaehler . " questions converted.";
+//echo "<br>";
+//echo "<br>";
+$exportlogData.="\n";
+$exportlogData.=$zaehler . "  survey questions converted.\n";
+$exportlogData.="\n";
 $i=0;
 ?>

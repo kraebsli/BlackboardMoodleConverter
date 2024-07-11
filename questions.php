@@ -6,12 +6,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
  * */
-  //***********************************************Questions
-include("quiz.php");
-include("question.php");
-include("answer.php");
-include("shortanswer.php");
-include("multiplechoice.php");
+  //***********************************************Pool Questions
+include_once("quiz.php");
+include_once("question.php");
+include_once("answer.php");
+include_once("shortanswer.php");
+include_once("multiplechoice.php");
 $questions_ar=array();
 $quiz_ar=array();
 $r=0;
@@ -35,10 +35,12 @@ $resident=$res['identifier'];
 $seltype="";
 	//************************ein Test pro .dat-Datei
 	$resdat=$dir . "/" . $resident . ".dat";//directory
-	
+	//echo $resdat;
+	//echo "<br>";
 	$res_single=simplexml_load_file($resdat);
 	
     $test=$res_single->assessment;
+	if(isset($test->assessmentmetadata->bbmd_assessmenttype))
     $asstype=trim($test->assessmentmetadata->bbmd_assessmenttype);//Pool or Test
 
     if($asstype=="Pool")
@@ -79,7 +81,7 @@ $categoryid++;
 		$essayid=0;
 		$multianswerid=0;
 $scorevalue="0";
-$frageimSatz=false;
+$frageimSatz=true;
 	//***********************Quiztitel
 		//***********************Fragen
 foreach ($test->section as $s) {
@@ -96,6 +98,9 @@ foreach ($s->item as $question) {
 			$answer_ar=array();
 			$q= $question->itemmetadata->bbmd_questiontype;//Fragetyp
 			$q=trim($q);
+			//echo $q;
+			//echo "<br>";
+			
 			$questiontitle=trim($question['title']);
 	
 			$questiontitle=xmlencoding($questiontitle);
@@ -108,6 +113,7 @@ foreach ($s->item as $question) {
 			$df="";
 		}
 		;
+		
 		//***********Multiple Choice*****************************************
 			if($q=="Multiple Choice" or $q=="Multiple Answer")
 			{
@@ -149,8 +155,14 @@ foreach ($s->item as $question) {
 	else if($q=="Matching")//************MATCHING**************************
 			//************************************************************
 			{
-				echo "<h3>Es kann bei Zuordnungsaufgaben zu Fehlern kommen, bitte nachkorrigieren.</h3>";
+				$exportlogData.= "There may be errors in matching questions, it may be necessary to correct them:\n";
 				include("match_bbm.php");
+				for($i=0;$i<count($ques);$i++)
+				{
+					$questemp=$ques->getTitle();
+					$exportlogData.=$questemp;
+					$exportlogData.="\n";
+				}
 				$quiz->setQuestions($ques);//Frage in Quiz einfügen
 				$questions_ar["$quid"]=$ques;
 }//ende matching*********************************************
@@ -213,13 +225,46 @@ else if($q=="Jumbled Sentence")//**************************************
 			else 
 			{
 				
-				echo "<br>";
-				echo "<br>";
-				echo "Frage " . $questiontitle . " (Fragetyp ". $q . " nicht konvertiert)";
-				echo "<br>";
+				//echo "<br>";
+				//echo "<br>";
+				//echo "Question " . $questiontitle . " of question type ". $q . " not converted.";
+				$exportlogData.="\n";
+				$exportlogData.="Question " . $questiontitle . "  of question type ". $q . "is not converted.\n";
+				$exportlogData.="\n";
+				//echo "<br>";
 			}
 }//foreach question
 }
+			//********************************************************************************
+			
+		foreach ($test->section->section as $sec){
+		$selectionnumber=$sec->selection_ordering->selection->selection_number;
+		
+	foreach ($sec->selection_ordering->selection->or_selection->selection_metadata as $s) {
+//$s2=$s->selection_ordering->selection->or_selection->selection_metadata;
+$s=trim($s);
+
+$quids=str_replace("_", "", $s);
+
+		if(isset($questions_ar["$quids"]))
+		{
+	//$exportlogData.="Quiz " . $quids . " dfff.\n";
+		$quiz_p->setPoolQuestions($questions_ar["$quids"]);//Frage in Quiz einfügen
+		}
+		else
+		{
+			$exportlogData.="This random question not integrated.\n";
+			
+		}
+		//********************************************************
+	}//foreach
+	}	
+
+	if($selectionnumber>0)
+	{
+	
+	$aleat=true;
+	}
 if($sollsein=="true")
 		{
 		$quiz_ar[]=$quiz;//Quiz in array einfügen
@@ -227,17 +272,33 @@ if($sollsein=="true")
 		$sollsein=false;
 		}
 		$contextid++;
+		if($aleat==true)
+{
+	
+	$exportlogData.="Quiz " . $quiz2_demo . " contains random questions.\n";
+}
 }
 }//if isset quiz2
     }//asstype
 }//ende foreach .dat 
 //************************************************
 //************************************************
-		echo "<br>";
-				echo "<br>";
-				echo $zaehler . " Pool-Fragen konvertiert.";
-				echo "<br>";
-				echo "<br>";
+		//echo "<br>";
+				//echo "<br>";
+				//echo $zaehler . " Pool questions converted.";
+				$questionsnum=count($quiz_ar);
+if(count($questionsnum)>0)
+{
+$exportlogData.="\n";
+$exportlogData.=$questionsnum . "  pool quizzes converted.\n";
+$exportlogData.="\n";
+
+$exportlogData.="\n";
+
+}
+$exportlogData.=$zaehler . "  pool questions converted.\n";
+				//echo "<br>";
+				//echo "<br>";
 
 
 ?>

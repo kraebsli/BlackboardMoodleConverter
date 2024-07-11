@@ -83,7 +83,9 @@ $sectionpfad=$direxport . "/sections/section_" . $sectionid;
 		}
 mkdir($sectionpfad, 0700);
 	$pfad_section_inforef= $sectionpfad . "/inforef.xml";
-	
+	$visibility=1;
+	if($sectionheadline=="Extra")
+		$visibility=0;
 	copy("activities_src/inforef.xml", $pfad_section_inforef);
 	
 	$xmlfile_section='<?xml version="1.0" encoding="'.$charset.'"?>'."\n"; 
@@ -93,7 +95,7 @@ mkdir($sectionpfad, 0700);
 <summary/>
 <summaryformat>1</summaryformat>
 <sequence>". $sequence . "</sequence>
-<visible>1</visible>
+<visible>".$visibility . "</visible>
 <availablefrom>0</availablefrom>
 <availableuntil>0</availableuntil>
 <showavailability>0</showavailability>

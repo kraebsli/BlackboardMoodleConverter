@@ -18,6 +18,8 @@ if(count($arr_wikis)>0)
 		//$wikitext=$arr_wikis[$i]->getText();
 		$wikidescription=$arr_wikis[$i]->getDescription();
 		$wikipages=$arr_wikis[$i]->getPages();
+		$indent=$arr_wikis[$i]->getIndent();
+		$available=$arr_wikis[$i]->getAvailable();
 		//********************************************************************
 		//$pagefiles=$arr_pages[$i]->getAr();
 		$section=$arr_wikis[$i]->getSection();
@@ -36,7 +38,7 @@ copy("activities_src/grades.xml", $pfad3);
 $pfad4= $wikipfad . "/roles.xml";//roles
 copy("activities_src/roles.xml", $pfad4);
 $userspfad=$direxport ."/users.xml";
-copy("users.xml", $userspfad);
+copy("moodle_src/users.xml", $userspfad);
 		//$pfad5= $pagepfad . "/inforef.xml";//inforef
 		//copy("activities_src/inforef.xml", $pfad5);
 
@@ -50,8 +52,8 @@ $xmlfile13.="<module id=\"" . $wikiid . "\" version=\"" . $wikimoduleversion . "
   <idnumber></idnumber>
   <added>0</added>
   <score>0</score>
-  <indent>0</indent>
-  <visible>1</visible>
+  <indent>" . $indent . "</indent>
+  <visible>" . $available . "</visible>
   <visibleold>1</visibleold>
   <groupmode>1</groupmode>
   <groupingid>0</groupingid>

@@ -9,8 +9,16 @@ if(count($arr_links)>0)
 {
 $linkid=$arr_links[$i]->getId();
 $linktitle=$arr_links[$i]->getTitle();
+if(strlen($linktitle)>240)
+		{
+			$exportlogData.= "Original link name  " . $linktitle . "too long. It had to be shortened. Here the original text: " . $linktitle ."\n";
+			$linktitle=substr($linktitle,0,250);
+			
+		}
 $linktext=$arr_links[$i]->getText();
 $linkurl=$arr_links[$i]->getUrl();
+$indent=$arr_links[$i]->getIndent();
+$available=$arr_links[$i]->getAvailable();
 $section=$arr_links[$i]->getSection();
 $section=$section+$sectionstart;
 $urlfiles=$arr_links[$i]->getAr();
@@ -40,8 +48,8 @@ $xmlfile16.="<module id=\"" . $linkid . "\" version=\"" . $linkmoduleversion . "
   <idnumber></idnumber>
   <added>0</added>
   <score>0</score>
-  <indent>0</indent>
-  <visible>1</visible>
+  <indent>" . $indent . "</indent>
+  <visible>" . $available . "</visible>
   <visibleold>1</visibleold>
   <groupmode>1</groupmode>
   <groupingid>0</groupingid>

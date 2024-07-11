@@ -20,6 +20,8 @@ var $parentid;
 var $section;
  	 var $description;	
  	 var $order; 	
+	 var $indent;
+	 var $available;
 
  	function file($n,$i, $n2, $t, $r, $p, $s)
  	{
@@ -34,11 +36,21 @@ var $section;
  		$this->res=$r;
  		$this->parentid=$p;
 $this->section=$s;
+$this->indent=0;
+$this->available=1;
  	}
  	
  	
- 	
-
+ 	function getIndent()
+ 	{
+ 		
+ 		return $this->indent;
+ 	}
+	function setIndent($in)
+ 	{
+ 		
+ 		 $this->indent=$in;
+ 	}
  	function getName()
  	{
  		
@@ -95,5 +107,21 @@ $this->section=$s;
  	
  		$this->order =$o;
  	}
+	function getAvailable()
+ 	{
+ 			
+ 		return $this->available;
+ 	}
+ 	function setAvailable($a)
+ 	{
+ 	if($a==true)
+	{
+ 		$this->available ="1";
+	}
+	else
+	{
+		$this->available ="0";
+ 	}
+	}
  }
 ?>

@@ -162,7 +162,7 @@ foreach($objects as $name => $object){
       else 
       {
 		$xid="__" . $xid;
-         $filename_new=str_replace ($xid, "", $object->getFilename());
+        // $filename_new=str_replace ($xid, "", $object->getFilename());
          $path=$object->getPath();
          
          $path2=explode("home_dir/",$path);//für dateien, die in einem weiteren verzeichnis liegen
@@ -171,7 +171,19 @@ foreach($objects as $name => $object){
          	 //echo "path. " . $path2[1];
          	 $t1=$object->getFilename();//mit xid
          	 $names[0]=$path2[1] . "/" . $t1; //am anfang auch mit slash
-         	 $names[1]=$filename_new;
+			
+			 $o=$object .".xml";
+   $res_single=simplexml_load_file($o);
+   foreach ($res_single->relation->resource as $res) {
+	$filename_new2=$res->identifier;
+	
+   }
+		 	 $filename_new=$object;
+		  // $filename_new=basename($filename_new);
+		 $filename_new2 = basename($filename_new2);
+		 
+		  $names[1]=$filename_new2;//Dateiname
+		     
          }
          else 
          {
@@ -330,22 +342,34 @@ foreach($objects as $name => $object){
       	}
       	else 
       	{
+			
       	$xid="__" . $xid;
-      
-         $filename_new=str_replace ($xid, "", $object->getFilename());//xid-zusatz wird entfernt
-        $filename_new=trim($filename_new);
-  
-        	 $names[0]=$name;//pfad zur originaldatei
-        
-         	 $names[1]=$filename_new;//Dateiname
+    
+        // $filename_new=str_replace ($xid, "", $object->getFilename());//xid-zusatz wird entfernt
+        //$filename_new=trim($filename_new);
+		$o=$object .".xml";
+   $res_single=simplexml_load_file($o);
+   foreach ($res_single->relation->resource as $res) {
+	$filename_new2=$res->identifier;
+	
+   }
+		 	 $filename_new=$object;
+		  // $filename_new=basename($filename_new);
+		 $filename_new2 = basename($filename_new2);
+		  $names[0]=$filename_new;//pfad zur originaldatei
+		  $names[1]=$filename_new2;//Dateiname
+		      break;
+		  
+        	
          //************************************************
-      break;
+  
          //*****************************************************
        
          
       	}
       }
 }
+
 }
 }
 //$names[1]=utf8_decode($names[1]);
@@ -359,6 +383,7 @@ $names[1]=str_replace("Ö", "Oe", $names[1]);
 $names[1]=str_replace("ß", "ss", $names[1]);*/
 //echo $names[1];
 //echo "<br>";
+
 return $names;
 }
 //***********************************************************
@@ -585,6 +610,7 @@ $ids=array();
 			$p2=$value->getOtherSections();
 			for($i=0;$i<count($p2);$i++)
 			{
+					
 				if($p2[$i][0]==$parentid)//new section identified
 				{
 					
@@ -597,10 +623,12 @@ $ids=array();
 				
 					$id_inter=$arrinter[$t]->getId();
 					$ids[]=	$id_inter;
+					
 					//echo "idinter" . $id_inter;
 					//echo "<br>";
 					$parentid_section=$value->getParentId();
 					$ids[]=	$parentid_section;
+					
 					//echo "        parentid_section" . $parentid_section;
 					//echo "<br>";
 					break;
@@ -613,5 +641,24 @@ $ids=array();
 	//****************sectionobject finden
 
 	return $ids;
+}
+function console_log($output, $with_script_tags = true) {
+    $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) . 
+');';
+    if ($with_script_tags) {
+        $js_code = '<script>' . $js_code . '</script>';
+    }
+    echo $js_code;
+}
+function shutDownFunction($f) {
+    $error = error_get_last();
+     // Fatal error, E_ERROR === 1
+    if ($error['type'] === E_ERROR) {
+         $myFile = "logs_notok/".$f. ".log";;
+$fh = fopen($myFile, 'w') or die("can't open file");
+
+fwrite($fh, $error['message']);
+fclose($fh);
+    }
 }
 ?>

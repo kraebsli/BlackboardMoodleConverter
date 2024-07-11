@@ -4,7 +4,7 @@
  * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
  * */
 //directories für folder
-if($allfiles>$fileslimit)
+/*if($allfiles>$fileslimit)
 {
  for($i=0; $i < count($arr_parentids); $i++)
 	{
@@ -111,7 +111,7 @@ $folderpfad=$direxport . "/activities/folder_". $folderid;
 				}
 		}
 	}
-}
+}*/
 //files as resources
 	//*******************************************************************************************
  for($i=0; $i < count($arr_parentids); $i++)
@@ -139,21 +139,44 @@ $folderpfad=$direxport . "/activities/folder_". $folderid;
 						//$filename=xmlencoding($filename);
 						$title=$arr_allItems[$k]->getTitle();
 						$description=$arr_allItems[$k]->getDescription();
+						$indent=$arr_allItems[$k]->getIndent();
+						$available=$arr_allItems[$k]->getAvailable();
+						if (stripos(strtolower($description), "@X@EmbeddedFile.requestUrlStub") !== false)
+{
+	$description=$description . ": iFrame Content cannot be displayed.";
+	$exportlogData.="iFrame Content cannot be displayed in  " . $filename ."\n";
+}
 						$section=$arr_allItems[$k]->getSection();
 						$section=$section+$sectionstart;
 						//**************************************
 	if($title==$filename){
-		$title="";
-		$showfileandtitle=$title;
+		
+		$showfileandtitle=$filename;
+			if(strlen($showfileandtitle)>220)
+			{
+				
+	
+			$exportlogData.= "Original file name of file " . $title . "too long. It had to be shortened. Here the original name: " . $filename ."\n";
+			$showfileandtitle=substr($showfileandtitle,0,250);
+			
+		
+			}
+			$title="";
 	}
 	else
 	{
 		if($title!=="")
 		{
-			$showfileandtitle=$title;
+			$showfileandtitle=$filename;
+			//$description=$title;
 			if(strlen($showfileandtitle)>220)
 			{
-				$showfileandtitle=$filename;
+				
+	
+			$exportlogData.= "Original file name of file " . $title . "too long. It had to be shortened. Here the original name: " . $filename ."\n";
+			$showfileandtitle=substr($showfileandtitle,0,250);
+			
+		
 			}
 			else
 			{
@@ -162,7 +185,16 @@ $folderpfad=$direxport . "/activities/folder_". $folderid;
 		}
 		else
 		{
-			$showfileandtitle=$title;
+			$showfileandtitle=$filename;
+				if(strlen($showfileandtitle)>220)
+			{
+				
+	
+			$exportlogData.= "Original file name of file " . $title . "too long. It had to be shortened. Here the original name: " . $filename ."\n";
+			$showfileandtitle=substr($showfileandtitle,0,250);
+			
+		
+			}
 		}
 	}
 	//**************************************
@@ -215,9 +247,9 @@ $folderpfad=$direxport . "/activities/folder_". $folderid;
 	$xmlfile4.="<availablefrom>0</availablefrom><groupmembersonly>0</groupmembersonly>
 <availability_info/><completiongradeitemnumber>$@NULL@$</completiongradeitemnumber>
 <completionexpected>0</completionexpected><completion>0</completion><groupmode>0</groupmode>
-<indent>0</indent><modulename>resource</modulename>
+<indent>" . $indent . "</indent><modulename>resource</modulename>
 <score>0</score>
-<visible>1</visible>
+<visible>" . $available . "</visible>
 <showdescription>1</showdescription><availableuntil>0</availableuntil>
 <sectionnumber>" . $section . "</sectionnumber>";
 	$xmlfile4.="<groupingid>0</groupingid><showavailability>0</showavailability>
@@ -232,6 +264,7 @@ $folderpfad=$direxport . "/activities/folder_". $folderid;
 	
 	//***************************************************************
 	//****************resource.xml*****************************
+	//$showfileandtitle=xmlencoding($showfileandtitle);
 	$xmlfile5='<?xml version="1.0" encoding="'.$charset.'"?>'."\n";
 	$xmlfile5.="<activity id=\"" . $k . "\" modulename=\"resource\" contextid=\"" . $fileid . "\" moduleid=\"" . $fileid ."\">";
 	$xmlfile5.="<resource id=\"" . $k . "\"><displayoptions>a:2:{s:10:\"printintro\";i:1;s:12:\"printheading\";i:0;}</displayoptions>

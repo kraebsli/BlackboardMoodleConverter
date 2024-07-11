@@ -61,8 +61,8 @@ foreach ($daten->resources->resource as $res) {
 //$s2=$s->selection_ordering->selection->or_selection->selection_metadata;
 $s=trim($s);
 $quids=str_replace("_", "", $s);
-echo "sdkfjsdlfj" . $quids;
-echo "<br>";
+//echo "sdkfjsdlfj" . $quids;
+//echo "<br>";
 		if(isset($questions_ar["$quids"]))
 		{
 	
@@ -135,8 +135,8 @@ echo "<br>";
 		else if($q=="Essay" or $q=="File Upload")//************ESSAY**************************
 		//************************************************************
 		{
-			echo $quid;
-			echo "<br>";
+			//echo $quid;
+			//echo "<br>";
 			include("essay-fileupload_bbm.php");
 			$quiz_p->setQuestions($ques);//Frage in Quiz einfügen
 			$questions_ar["$quid"]=$ques;
@@ -208,10 +208,13 @@ echo "<br>";
 		else
 		{
 	
-			echo "<br>";
-			echo "<br>";
-			echo "Frage " . $questiontitle . " (Fragetyp ". $q . " nicht konvertiert)";
-			echo "<br>";
+			//echo "<br>";
+			//echo "<br>";
+			//echo "Question " . $questiontitle . " (Question type ". $q . " not converted.)";
+			//echo "<br>";
+			$exportlogData.="\n";
+			$exportlogData.="Question " . $questiontitle . " (Question type ". $q . " not converted.\n)";
+			$exportlogData.="\n";
 		}
 	}//foreach question
 	}
@@ -221,9 +224,12 @@ echo "<br>";
 	}//title
 	}
 }//foreach
-echo "<br>";
-echo "<br>";
-echo $zaehler . " Fragen konvertiert.";
+//echo "<br>";
+//echo "<br>";
+//echo $zaehler . " questions converted.";
+exportlogData.="\n";
+$exportlogData.=$zaehler . " questions converted.\n";
+$exportlogData.="\n";
 echo "<br>";
 echo "<br>";
 ?>

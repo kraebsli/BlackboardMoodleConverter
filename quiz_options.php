@@ -29,7 +29,8 @@ foreach ($daten->resources->resource as $res) {
 		$deliverytype=trim($deliverytype['value']);
 
 		$timelimit=$res_single->TIMELIMIT;
-		$timelimit=trim($timelimit['value'])*60;
+		$timetemp=(int) $timelimit['value'];
+		$timelimit=$timetemp*60;
 				$attemptcount=$res_single->ATTEMPTCOUNT;
 		$attemptcount=trim($attemptcount['value']);
 		$allowmultiple=$res_single->FLAGS->ALLOWMULTIPLEATTEMPTS;
@@ -42,6 +43,8 @@ foreach ($daten->resources->resource as $res) {
 		{
 		$quiz_ar_ids["$quizid"]->setDeliveryType($deliverytype);
 		$quiz_ar_ids["$quizid"]->setTimeLimit($timelimit);
+		$quiz_ar_ids["$quizid"]->setAttemptCount($attemptcount);
+		
 		}
 		
 	}

@@ -1,35 +1,83 @@
 <?php
 //*****************************************************
 $descr_var=true;
+$allresources=array();
+$allresources_ok=array();
+$pagedescription="";
+$arrfiles_not=array();
+$arr_scorm=array();
+$arr_assignment=array();
+$temp_section_ar=array();
 
+$tempvalue="";
+$content_converted=false;
+$quizlink_ar=array();
+$quizzids_ar=array();
+//*************************
+//*****************************************************************
 foreach ($daten->resources->resource as $res) {
+	$resident=$res['identifier'];
+	if(isset($res['type']))
+	{
+	$residentcontenthandler=trim($res['type']);
 	
+	//******************************************************
+	$resdat=$dir . "/" . $resident . ".dat";//directory
+	$res_single=simplexml_load_file($resdat);
+	
+	if($residentcontenthandler=="resource/x-bb-link")//Verlinkung von Tests
+{
+
+	$referrer=$res_single->REFERRER;
+	$referrerid=$referrer['id'];
+	$referrerto=$res_single->REFERREDTO;
+	$referrertoid=$referrerto['id'];
+	$quizlink_ar["$referrerid"]=$referrertoid;
+}
+	}
+}
+//************************************************************
+foreach ($daten->resources->resource as $res) {
+	$content_converted=false;
 	$countfiles=0;
 	$resident=$res['identifier'];
-	$residentcontenthandler=$res['type'];
-	
+	$residentcontenthandler=trim($res['type']);
+	$origname="";
 	//******************************************************
 	$resdat=$dir . "/" . $resident . ".dat";//directory
 	$res_single=simplexml_load_file($resdat);
 	$contenthandler=$res_single->CONTENTHANDLER;
 	$contenthandler=trim($contenthandler['value']);
+
 	$mod_label="";
 	$parentid=$res_single->PARENTID;
 	$parentid=trim($parentid['value']);
 	//**************************************************
+	if(isset($res_single->FILES->FILE))
+	{
 	foreach ($res_single->FILES->FILE as $file) {
 		$countfiles++;
-		$allfiles++;
+		
 			}
+	}
 	if($contenthandler=="resource/x-bb-file")
 	{
+		$content_converted=true;
+	
+			 if(in_array($contenthandler, $allresources_ok, true)){
+        
+		}
+	else
+	{
+		array_push($allresources_ok, $contenthandler);
+	}
 	//************************************************************
 	if(isset($res_single->FILES->FILE->LINKNAME))
 	{
 		$title=$res_single->TITLE;
 		$title=$title['value'];
 		//**************************************************
-		
+	
 		//**************************************************
 		/*
          foreach ($res_single->FILES->FILE->LINKNAME as $file) {
@@ -95,29 +143,119 @@ foreach ($daten->resources->resource as $res) {
 			//************************************************************************
 			if(preg_match("`^.*\.(htm|html)$`", $filename)){
 				//******************
-				$indexhtmtext="<p>HTML-Dateien werden nicht uebernommen. Exportieren Sie diese aus Ihrem Blackboard-Kurs separat.</p>";
+				$indexhtmtext="<p>HTML files get not converted.</p>";
 				$arrtemp=array();
 				//************************************************************************
-				$labelitem= new label ($labelid, "htm", "HTML-Dateien werden nicht uebernommen.",  $section, $arrtemp, $labelid);
+				$labelitem= new label ($labelid, "htm", "HTML files get not converted.",  $section, $arrtemp, $labelid);
 				$order++;
 				//$labelitem->setOrder($order);
 				$arr_allItems[$order]=$labelitem;
 				$arr_labels[]=$labelitem;
-				if(isset($arr_parentids_3["$parentid"]))
+				$labelitem->setAvailable($available);
+				$itemid=$labelid;
+			//***************************************sectionorder**************************************
+			
+					$itemid=$labelid;
+					//***************************************************
+			if (isset($arr_parentids_3["$parentid"]))
 				{
-					$arr_parentids_3["$parentid"]->setSectionorder($labelid);
+		
+					$arr_parentids_3["$parentid"]->insertSectionElement($itemid);
+					
+					
 				
-			}
+				}
 			else
-			{
+				{
+			
+				
+					$folderitem->setIndent("2");
+				//$temp_section_ar********************************************************************
 				$otherSectionid=otherSection($parentid, $arr_parentids_3, $arr_interheadlines);
 				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
 				if(isset($othersectionid_p)&& $otherSectionid!=="")
-				$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$labelid);
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$itemid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$itemid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+				
+				}//*************************************************************************************
+
 			}
+				//************************sectionorder*****************************************************
 				$labelid++;
 				
+				
 			}//************************************************************************
+			elseif (stripos(strtolower($filename), ".mp4") !== false || stripos(strtolower($filename), ".mov") !== false )
+{
+	$arrtemp=array();
+	$videoms= "Video: " . $origname . "," . $filename;
+	$videoms=xmlencoding($videoms);
+				//************************************************************************
+				$labelitem= new label ($labelid, "Video", $videoms,  $section, $arrtemp, $labelid);
+				$order++;
+				//$labelitem->setOrder($order);
+				$arr_allItems[$order]=$labelitem;
+				$arr_labels[]=$labelitem;
+				$labelitem->setAvailable($available);
+			//***************************************sectionorder**************************************
+			
+					$itemid=$labelid;
+					//***************************************************
+			if (isset($arr_parentids_3["$parentid"]))
+				{
+		
+					$arr_parentids_3["$parentid"]->insertSectionElement($itemid);
+					
+					
+				
+				}
+			else
+				{
+			
+				
+					$labelitem->setIndent("2");
+				//$temp_section_ar********************************************************************
+				$otherSectionid=otherSection($parentid, $arr_parentids_3, $arr_interheadlines);
+				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
+				if(isset($othersectionid_p)&& $otherSectionid!=="")
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$itemid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$itemid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+				
+				}//*************************************************************************************
+
+			}
+				//************************sectionorder*****************************************************
+				$labelid++;
+				
+			
+				
+			}
 			else
 			{
 				//$parentid=$res_single->PARENTID;
@@ -164,33 +302,66 @@ foreach ($daten->resources->resource as $res) {
 					//**************************************************
 		
 					//************************************************************************
-					$fileitem= new file ($filename, $fileid,$filename2, $title, $resident, $parentid, $section);
+					$fileitem= new file ($title, $fileid,$filename2, $title, $resident, $parentid, $section);
+					//echo $filename;
+					//echo "<br>";
 					$order++;
 					$fileitem->setOrder($order);
-				if(isset($arr_parentids_3["$parentid"]))
+					$fileitem->setAvailable($available);
+							$itemid=$fileid;
+	//***************************************sectionorder**************************************
+			
+					$itemid=$fileid;
+					//***************************************************
+			if (isset($arr_parentids_3["$parentid"]))
 				{
-					$arr_parentids_3["$parentid"]->setSectionorder($fileid);
+		
+					$arr_parentids_3["$parentid"]->insertSectionElement($itemid);
+					
+					
 				
-			}
+				}
 			else
-			{
+				{
+			
+				
+					$fileitem->setIndent("2");
+				//$temp_section_ar********************************************************************
 				$otherSectionid=otherSection($parentid, $arr_parentids_3, $arr_interheadlines);
 				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
 				if(isset($othersectionid_p)&& $otherSectionid!=="")
-				$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$fileid);
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$itemid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$itemid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+				
+				}//*************************************************************************************
+
 			}
+				//************************sectionorder*****************************************************
 					$arr_allItems[$order]=$fileitem;
 					$arr_files[]=$fileitem;
 					$allfiles++;
-					//$helparray_nonfolderfiles[]=$fileid;
+					$helparray_nonfolderfiles[]=$fileid;
 					//**************************************************
 					if($parentid=="{unset id}")
 					{
 					}
 					else
 					{
-						$f=$arr["$parentid"];//Folder wird identifiziert
-						$f->setFiles($fileitem);//dem Folder wird das File zugeordnet
+						//$f=$arr["$parentid"];//Folder wird identifiziert
+						//$f->setFiles($fileitem);//dem Folder wird das File zugeordnet
 						
 					}
 					//**************************************************
@@ -205,11 +376,23 @@ foreach ($daten->resources->resource as $res) {
 	}//ende if isset
 }
 	//*****************************************************************************************************
-	elseif($contenthandler=="resource/x-bb-document")
+	elseif($contenthandler=="resource/x-bb-document" || $contenthandler=="resource/x-bb-assignment")
 	{
+		$available=$res_single->FLAGS->ISAVAILABLE;
+		$available=$available['value'];
+		$content_converted=true;
+					 if(in_array($contenthandler, $allresources_ok, true)){
+        
+		}
+	else
+	{
+		array_push($allresources_ok, $contenthandler);
+	}
+	//***************************************************************
 		$arr_all=array();//takes embedded images and embedded files
 		$arrmitembeddedfiles=array();
 		$bild=array();
+		//*******************************************************
 		$pageid=$res_single['id'];
 		$pageid = preg_replace('![^0-9]!', '', $pageid); //ersetze alles au�er 0 bis 9
 		$parentid = preg_replace('![^0-9]!', '', $parentid); //ersetze alles au�er 0 bis 9
@@ -225,13 +408,13 @@ foreach ($daten->resources->resource as $res) {
 		//****************************************************************************************
 		$title=$res_single->TITLE;
 		$pagetitle=xmlencoding($title['value']);
-		
+		//$exportlogData.="pagetitle: " . $pagetitle;
 		$pagetext=$res_single->BODY->TEXT;
 		$pagetext=trim($pagetext);
 		//$pagetext=strip_tags($pagetext);
 		//echo "**************************************************";
 		//echo "<br>";
-		if(strlen($pagetext)>500)
+		if(strlen($pagetext)>250)
 		{
 			$mod_label=false;
 			
@@ -275,13 +458,14 @@ foreach ($daten->resources->resource as $res) {
 			$pagetext=$bild[1];
 		}
 		//bild[3] array mit fileitems
-		if(isset($bild[3]) && count($bild[3]>0))
+		if(isset($bild[3]) && count($bild[3])>0)
 		{
 			$arrmitembeddedfiles=$bild[3];//die elemente des zur�ckgegebenen arrays werden in hauptarray eingef�gt
 			for($i=0;$i<count($bild[3]); $i++)
 			{
 			if($mod_label==false)
 			{
+					//$exportlogData.= "embedded" .$i ."\n";
 			$arr_files_embedded[]=$arrmitembeddedfiles[$i];
 			$arr_all[]=$arrmitembeddedfiles[$i];
 			}
@@ -293,32 +477,72 @@ foreach ($daten->resources->resource as $res) {
 		
 		
 			}//for
-			}//if
+		}//if
 			//**********************************************only FILES**************************************
 			//**********************************************************************************************
 
-			if($modus=="multiplefolders"  && $countfiles>1)
+			if($modus=="multiplefolders"  && $countfiles>0)
 			{
-			$folderitem=new folder($pagetitle, $pageid, $parentid);
+				//Headline******************************************************************
+			//$folderitem=new label($pagetitle, $pageid, $parentid);
+			$arrtemp=array();
+			$pagetitle_format="<h4>". $pagetitle . "</h4>";
+			$pagetitle_format=xmlencoding($pagetitle_format);
+			//new label ($labelid, "Info", $textlabel,  $section, $arrmitembeddedfiles2, $topitemid1);
+			$folderitem= new label ($labelid, $pagetitle_format, $pagetitle_format,  $section, $arrtemp, $labelid);
+			$folderitem->setAvailable($available);
 
-			$arr["$pageid"]=$folderitem;
-			$arr_folder_simple[]=$folderitem;
 			$order++;
 			$arr_allItems[$order]=$folderitem;
+			$arr_labels[]=$folderitem;
 			
-			if(isset($arr_parentids_3["$parentid"]))
+			//echo "3 new folderitem: " . $pagetitle . "<br>";
+			//***************************************sectionorder**************************************
+			
+					$itemid=$labelid;
+					//***************************************************
+			if (isset($arr_parentids_3["$parentid"]))
 				{
-					$arr_parentids_3["$parentid"]->setSectionorder($pageid);
+		
+					$arr_parentids_3["$parentid"]->insertSectionElement($itemid);
+					
+					
 				
-			}
+				}
 			else
-			{
+				{
+			
+				
+					$folderitem->setIndent("2");
+				//$temp_section_ar********************************************************************
 				$otherSectionid=otherSection($parentid, $arr_parentids_3, $arr_interheadlines);
 				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
 				if(isset($othersectionid_p)&& $otherSectionid!=="")
-				$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$pageid);
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$itemid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$itemid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+				
+				}//*************************************************************************************
+
 			}
-        }
+				//************************sectionorder*****************************************************
+						
+			$labelid++;
+        }//if modus multiplefolders
+	//Headline******************************************************************
+		//Files******************************************************************
 			foreach($res_single->FILES->FILE as $pfile)//******************************************************
 			{
 		
@@ -343,99 +567,251 @@ foreach ($daten->resources->resource as $res) {
 		
 			if($fname[1]=="")
 			{
-		
+		$origname=$filename3;
+		//$ohneendung=basename($filename3, ".pptx");
 			$fname=VerzeichnisDurchsuchen3($dir, $filename3);
-			}
-			$fname[1]=trim($fname[1]);
-			//$htmlzeichen=strpos($fname[1], ".htm");
-			if(preg_match("`^.*\.(htm|html)$`", $fname[1])){//**************************************************
-$textlabel=$fname[1] . ": HTML-Dateien werden aus Blackboard nicht in Moodle uebernommen .";
-$topitemid1="";
-$arrmitembeddedfiles2=array();
-		$textlabel=xmlencoding($textlabel);
-		$labelitem= new label ($labelid, "Info", $textlabel,  $section, $arrmitembeddedfiles2, $topitemid1);
-		$order++;
-			$arr_allItems[$order]=$labelitem;
-			$arr_labels[]=$labelitem;
-				if(isset($arr_parentids_3["$parentid"]))
-				{
-					$arr_parentids_3["$parentid"]->setSectionorder($labelid);
-				
+			//$exportlogData.= "filename3" . $filename3 ."\n";
 			}
 			else
 			{
+				//$exportlogData.= "filename2" . $filename2 ."\n";
+				$origname=$filename2;
+			}
+			$fname[1]=trim($fname[1]);
+			//$exportlogData.= "testausgabe" . $fname[1] ."\n";
+			//****************************************************************************
+			//$htmlzeichen=strpos($fname[1], ".htm");
+			if(preg_match("`^.*\.(htm|html)$`", $fname[1])){//******************HTMLdateien
+			$textlabel=$fname[1] . ": HTML files are not converted .";
+
+			$arrfiles_not[]=$fname[1];
+			$topitemid1="";
+			$arrmitembeddedfiles2=array();
+			$textlabel=xmlencoding($textlabel);
+			$labelitem= new label ($labelid, "Info", $textlabel,  $section, $arrmitembeddedfiles2, $topitemid1);
+			$order++;
+			$labelitem->setAvailable($available);
+			$arr_allItems[$order]=$labelitem;
+			$arr_labels[]=$labelitem;
+			//***************************************sectionorder**************************************
+			
+					$itemid=$labelid;
+					//***************************************************
+			if (isset($arr_parentids_3["$parentid"]))
+				{
+		
+					$arr_parentids_3["$parentid"]->insertSectionElement($itemid);
+					
+					
+				
+				}
+			else
+				{
+			
+				
+					$labelitem->setIndent("2");
+				//$temp_section_ar********************************************************************
 				$otherSectionid=otherSection($parentid, $arr_parentids_3, $arr_interheadlines);
 				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
 				if(isset($othersectionid_p)&& $otherSectionid!=="")
-				$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$labelid);
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$itemid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$itemid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+				
+				}//*************************************************************************************
+
 			}
+				//************************sectionorder*****************************************************
+			
 			$labelid++;
-			}//**************************************************
+			}//**************************************************if pregmatch Video
+		elseif (stripos(strtolower($fname[1]), ".mp4") !== false || stripos(strtolower($fname[1]), ".mov") !== false ){
+
+				$arrtemp=array();
+				$videoms= "Video: " . $origname . "," . $fname[1];
+				$videoms=xmlencoding($videoms);
+				//************************************************************************
+				$labelitem= new label ($labelid, "Video", $videoms,  $section, $arrtemp, $labelid);
+				$order++;
+				//$labelitem->setOrder($order);
+				$arr_allItems[$order]=$labelitem;
+				$arr_labels[]=$labelitem;
+				$labelitem->setAvailable($available);
+				//***************************************sectionorder**************************************
+			
+					$itemid=$labelid;
+					//***************************************************
+			if (isset($arr_parentids_3["$parentid"]))
+				{
+		
+					$arr_parentids_3["$parentid"]->insertSectionElement($itemid);
+					
+					
+				
+				}
+			else
+				{
+			
+				
+					$labelitem->setIndent("2");
+				//$temp_section_ar********************************************************************
+				$otherSectionid=otherSection($parentid, $arr_parentids_3, $arr_interheadlines);
+				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
+				if(isset($othersectionid_p)&& $otherSectionid!=="")
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$itemid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$itemid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+				
+				}//*************************************************************************************
+
+			}
+				//************************sectionorder*****************************************************
+				
+				$labelid++;
+
+			
+				
+			}
 			elseif(isset($fname[1]) && $fname[1]!=="")
 			{
 		
+			$fileitem= new file ($fname[1], $fileid,$filename2,$title["value"], $resident, $parentid, $section);
+			$fileitem->setAvailable($available);
+			$arr_files[]=$fileitem;
+            $helparray_nonfolderfiles[]=$fileid;
+			$fileitem->setAvailable($available);
+				
+			//$f=$arr["$parentid"];//Folder wird identifiziert
+			//$f->setFiles($fileitem);//dem Folder wird das File zugeordnet
+			//***************************************sectionorder**************************************
 			
-			if($modus=="multiplefolders" && $countfiles>1)
-			{
-				
-				$fileitem= new file ($fname[1], $fileid,$filename2, $title['value'], $resident, $pageid, $section);
-				$fileitem->setOrder($order);
-				$arr_files[]=$fileitem;
-				$f=$arr["$pageid"];
-				$f->setFiles($fileitem);//dem Folder wird das File zugeordnet
-			
-			}
-			else //single file
-			{
-				
-				$fileitem= new file ($fname[1], $fileid,$filename2, $title['value'], $resident, $parentid, $section);
-				$arr_files[]=$fileitem;
-               //$helparray_nonfolderfiles[]=$fileid;
-				
-			$f=$arr["$parentid"];//Folder wird identifiziert
-			$f->setFiles($fileitem);//dem Folder wird das File zugeordnet
-			//*************************************************************
-				if(isset($arr_parentids_3["$parentid"]))
+					$itemid=$fileid;
+					//***************************************************
+				if (isset($arr_parentids_3["$parentid"]))
 				{
-					$arr_parentids_3["$parentid"]->setSectionorder($fileid);
+			
+					$arr_parentids_3["$parentid"]->insertSectionElement($itemid);
+					
+					
 				
-			}
+				}
+			
 			else
-			{
+				{
+			
+				
+				
+				//$temp_section_ar********************************************************************
 				$otherSectionid=otherSection($parentid, $arr_parentids_3, $arr_interheadlines);
 				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
 				if(isset($othersectionid_p)&& $otherSectionid!=="")
-				$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$fileid);
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$itemid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$itemid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+				
+				}//*************************************************************************************
+
 			}
+				//************************sectionorder*****************************************************
 				//**************************************
+				$fileitem->setIndent("2");
                 $order++;
                 $fileitem->setOrder($order);
                 $arr_allItems[$order]=$fileitem;
-			}//else
-			//$pagedescription=$pagetitle;
 			
+						//$pagedescription=$pagetitle;
 			
 			}// else (isset($fname[1]) && $fname[1]!=="")
-			else
+			else //file not found
 			{
-			$textlabel=$pagetitle . ": Datei konnte nicht wiederhergestellt werden.";
+			$textlabel=$origname . ": File could not be restored because it could not be found in the archive.";
+			//echo $textlabel ."<br>";
+			//$exportlogData.= "notfound" .$origname ."\n";
+			$arrfiles_not[]=$origname;
 			$topitemid1="";
 			$arrmitembeddedfiles2=array();
 			$textlabel=xmlencoding($textlabel);
 			$labelitem= new label ($labelid, "Info", $textlabel,  $section, $arrmitembeddedfiles2, $topitemid1);
 			$arr_labels[]=$labelitem;
-				if(isset($arr_parentids_3["$parentid"]))
+			$labelitem->setAvailable($available);
+					//***************************************sectionorder**************************************
+			
+					$itemid=$labelid;
+					//***************************************************
+			if (isset($arr_parentids_3["$parentid"]))
 				{
-					$arr_parentids_3["$parentid"]->setSectionorder($labelid);
+		
+					$arr_parentids_3["$parentid"]->insertSectionElement($itemid);
+					
+					
 				
-			}
+				}
 			else
-			{
+				{
+			
+				
+					$labelitem->setIndent("2");
+				//$temp_section_ar********************************************************************
 				$otherSectionid=otherSection($parentid, $arr_parentids_3, $arr_interheadlines);
 				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
 				if(isset($othersectionid_p)&& $otherSectionid!=="")
-				$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$labelid);
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$itemid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$itemid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+				
+				}//*************************************************************************************
+
 			}
+				//************************sectionorder*****************************************************
+			
 			$labelid++;
 			$order++;
 			$arr_allItems[$order]=$labelitem;
@@ -450,7 +826,7 @@ $arrmitembeddedfiles2=array();
 			//}
 			//*****************************************************
 			//*****************************************************
-		
+
 			}//************FILESforeach
 			//**********************************************************************************************
 			//**********************************************************************************************
@@ -471,7 +847,7 @@ $arrmitembeddedfiles2=array();
 				//************************************************
 				if(isset($pagetext2[3]) && count($pagetext2[3])>0)
 			{
-		
+		//echo "1: folderpagetext<br>";
 			$arrmitembeddedfiles=$pagetext2[3];//die elemente des zur�ckgegebenen arrays werden in hauptarray eingef�gt
 			$f=$arr["$parentid"];//Folder wird identifiziert
 			for($i=0;$i<count($pagetext2[3]); $i++)
@@ -479,8 +855,10 @@ $arrmitembeddedfiles2=array();
 		
 			$arr_files[]=$arrmitembeddedfiles[$i];
 			$arr_all[]=$arrmitembeddedfiles[$i];
-		
-			$f->setFiles($arrmitembeddedfiles[$i]);//dem Folder wird das File zugeordnet
+		$helparray_nonfolderfiles[]=$fileid;
+			//$f->setFiles($arrmitembeddedfiles[$i]);//dem Folder wird das File zugeordnet
+			//echo "2: files for folder<br>";
+			
 			}
 			}//if isset pagetext
 			//***********************************************************
@@ -489,7 +867,7 @@ $arrmitembeddedfiles2=array();
 			{
 			if($countfiles>0 && $countfiles <2)
 			{
-				
+			if(isset($fileitem))
 			$fileitem->setDescription($pagetext);
 }
 elseif($countfiles>=2 )
@@ -498,7 +876,7 @@ elseif($countfiles>=2 )
 				if(isset($folderitem))
 				{
 					
-				$folderitem->setDescription($pagetext);
+				//$folderitem->setDescription($pagetext);
 				}
 			}			
 			else
@@ -516,18 +894,48 @@ elseif($countfiles>=2 )
 				$arr_pages2["$pageid"]=$pageitem;
 					$order++;
 					$arr_allItems[$order]=$pageitem;
-			if(isset($arr_parentids_3["$parentid"]))
+					$pageitem->setAvailable($available);
+			//***************************************sectionorder**************************************
+			
+					$itemid=$pageid;
+					//***************************************************
+			if (isset($arr_parentids_3["$parentid"]))
 				{
-					$arr_parentids_3["$parentid"]->setSectionorder($pageid);
+		
+					$arr_parentids_3["$parentid"]->insertSectionElement($itemid);
+					
+					
 				
-			}
+				}
 			else
-			{
+				{
+			
+				
+					$pageitem->setIndent("2");
+				//$temp_section_ar********************************************************************
 				$otherSectionid=otherSection($parentid, $arr_parentids_3, $arr_interheadlines);
 				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
 				if(isset($othersectionid_p)&& $otherSectionid!=="")
-				$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$pageid);
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$itemid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$itemid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+				
+				}//*************************************************************************************
+
 			}
+				//************************sectionorder*****************************************************
 					}
 					else//iter false
 					{
@@ -586,8 +994,8 @@ elseif($countfiles>=2 )
 					*/}
 					else //else****************************************************************
 					{
-					$pagetext=$pagetitle . ": " . $pagetext;
-					$pagetext=xmlencoding("<h4><span class=\"\" style=\"color: rgb(141, 174, 16);\">" . $pagetitle .  "</span></h4>" . $pagetext);
+					//$pagetext=$pagetitle . ": " . $pagetext;
+					$pagetext=xmlencoding("<h4>" . $pagetitle .  "</h4>" . $pagetext);
 					//******************************************************
 					if(isset($arr_pages2["$parentid"]))
 				{
@@ -601,19 +1009,49 @@ elseif($countfiles>=2 )
 					$arr_labels[]=$labelitem;
 					$order++;
 					$arr_allItems[$order]=$labelitem;
+					$labelitem->setAvailable($available);
 					
-					if(isset($arr_parentids_3["$parentid"]))
+					//***************************************sectionorder**************************************
+			
+					$itemid=$labelid;
+					//***************************************************
+			if (isset($arr_parentids_3["$parentid"]))
+				{
+		
+					$arr_parentids_3["$parentid"]->insertSectionElement($itemid);
+					
+					
+				
+				}
+			else
+				{
+			
+				
+					$labelitem->setIndent("2");
+				//$temp_section_ar********************************************************************
+				$otherSectionid=otherSection($parentid, $arr_parentids_3, $arr_interheadlines);
+				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
+				if(isset($othersectionid_p)&& $otherSectionid!=="")
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
 					{
-						$arr_parentids_3["$parentid"]->setSectionorder($labelid);
-					
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$itemid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
 					}
 					else
 					{
-						$otherSectionid=otherSection($parentid, $arr_parentids_3, $arr_interheadlines);
-						$othersectionid_p=$otherSectionid[1];
-						if(isset($othersectionid_p)&& $otherSectionid!=="")
-							$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$labelid);
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$itemid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
 					}
+				
+				}//*************************************************************************************
+
+			}
+				//************************sectionorder*****************************************************
 					$labelid++;
 					
 					}
@@ -627,9 +1065,17 @@ elseif($countfiles>=2 )
 			}//if isset pagetext
 		
 	}//*********************************************************************************
+	
 	elseif($contenthandler=="resource/x-bb-externallink")
 	{
-
+			 if(in_array($contenthandler, $allresources_ok, true)){
+        
+		}
+	else
+	{
+		array_push($allresources_ok, $contenthandler);
+	}
+$content_converted=true;
 		$linkid=$res_single['id'];
 		$linkid = preg_replace('![^0-9]!','', $linkid); //ersetze alles au�er 0 bis 9
 		$parentlinkid=$res_single->PARENTID;
@@ -685,18 +1131,47 @@ elseif($countfiles>=2 )
 	$arr_allItems[$order]=$linkitem;
 	//************************************************
 	$arr_links[]=$linkitem;
-	if(isset($arr_parentids_3["$parentlinkid"]))
+		//***************************************sectionorder**************************************
+			
+					$itemid=$linkid;
+					//***************************************************
+			if (isset($arr_parentids_3["$parentlinkid"]))
 				{
-					$arr_parentids_3["$parentlinkid"]->setSectionorder($linkid);
+		
+					$arr_parentids_3["$parentlinkid"]->insertSectionElement($itemid);
+					
+					
 				
-			}
+				}
 			else
-			{
+				{
+			
+				
+					$linkitem->setIndent("2");
+				//$temp_section_ar********************************************************************
 				$otherSectionid=otherSection($parentlinkid, $arr_parentids_3, $arr_interheadlines);
 				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
 				if(isset($othersectionid_p)&& $otherSectionid!=="")
-				$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$linkid);
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$itemid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$itemid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+				
+				}//*************************************************************************************
+
 			}
+				//************************sectionorder*****************************************************
 	
 	}
 	else 
@@ -717,18 +1192,47 @@ elseif($countfiles>=2 )
 			$arr_links[]=$linkitem;
 			$order++;
 			$arr_allItems[$order]=$linkitem;
-		if(isset($arr_parentids_3["$parentlinkid"]))
+			//***************************************sectionorder**************************************
+			
+					$itemid=$linkid;
+					//***************************************************
+			if (isset($arr_parentids_3["$parentlinkid"]))
 				{
-					$arr_parentids_3["$parentlinkid"]->setSectionorder($linkid);
+		
+					$arr_parentids_3["$parentlinkid"]->insertSectionElement($itemid);
+					
+					
 				
-			}
+				}
 			else
-			{
+				{
+			
+				
+					$linkitem->setIndent("2");
+				//$temp_section_ar********************************************************************
 				$otherSectionid=otherSection($parentlinkid, $arr_parentids_3, $arr_interheadlines);
 				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
 				if(isset($othersectionid_p)&& $otherSectionid!=="")
-				$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$linkid);
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$itemid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$itemid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+				
+				}//*************************************************************************************
+
 			}
+				//************************sectionorder*****************************************************
 			
 		}
 	}
@@ -737,6 +1241,14 @@ elseif($countfiles>=2 )
 }//ende if links
 elseif($contenthandler=="resource/x-bb-youtube-mashup")
 {
+	$content_converted=true;
+			 if(in_array($contenthandler, $allresources_ok, true)){
+        
+		}
+	else
+	{
+		array_push($allresources_ok, $contenthandler);
+	}
 	$ytid=$res_single['id'];
 	$ytid = preg_replace('![^0-9]!','', $ytid); //ersetze alles au�er 0 bis 9
 	$parentytid=$res_single->PARENTID;
@@ -784,18 +1296,47 @@ elseif($contenthandler=="resource/x-bb-youtube-mashup")
 			$arr_pages[]=$ytitem;
 			$order++;
 			$arr_allItems[$order]=$ytitem;
-		if(isset($arr_parentids_3["$parentytid"]))
+			//***************************************sectionorder**************************************
+			
+					$itemid=$ytid;
+					//***************************************************
+			if (isset($arr_parentids_3["$parentytid"]))
 				{
-					$arr_parentids_3["$parentytid"]->setSectionorder($ytid);
+		
+					$arr_parentids_3["$parentytid"]->insertSectionElement($itemid);
+					
+					
 				
-			}
+				}
 			else
-			{
-				$otherSectionid=otherSection($parentlinkid, $arr_parentids_3, $arr_interheadlines);
+				{
+			
+				
+					$ytitem->setIndent("2");
+				//$temp_section_ar********************************************************************
+				$otherSectionid=otherSection($parentytid, $arr_parentids_3, $arr_interheadlines);
 				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
 				if(isset($othersectionid_p)&& $otherSectionid!=="")
-				$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$ytid);
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$itemid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$itemid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$itemid;
+					}
+				
+				}//*************************************************************************************
+
 			}
+				//************************sectionorder*****************************************************
 		}
 		
 		
@@ -803,7 +1344,14 @@ elseif($contenthandler=="resource/x-bb-youtube-mashup")
 }
 elseif($residentcontenthandler=="resource/x-bb-staffinfo")
 {
-	
+	$content_converted=true;
+			 if(in_array($residentcontenthandler, $allresources_ok, true)){
+        
+		}
+	else
+	{
+		array_push($allresources_ok, $residentcontenthandler);
+	}
 	$contactid=$res_single['id'];
 	$contactid = preg_replace('![^0-9]!','', $contactid); //ersetze alles au�er 0 bis 9
 	/*$parentcontactid=$res_single->PARENTID;
@@ -841,7 +1389,7 @@ elseif($residentcontenthandler=="resource/x-bb-staffinfo")
 	$contact_hp=$contact_hp['value'];
 	$contact_hp=xmlencoding($contact_hp);
 $contact_all.="<h3>" . $contact_title . "</h3><br>" .$contact_bio . "<br>". $contact_tit . " " . $contact_giv . " " . $contact_fam;
-$contact_all.="<br>E-Mail: " . $contact_mail .  "<br>Telefon: " . $contact_phone . "<br>Sprechzeiten: " . $contact_hours . "<br>Buero: " . $contact_adr . "<br>" . $contact_hp . "<br><br>";
+$contact_all.="<br>E-Mail: " . $contact_mail .  "<br>Téléphone: " . $contact_phone . "<br>Heures de bureau: " . $contact_hours . "<br>Bureau: " . $contact_adr . "<br>" . $contact_hp . "<br><br>";
 $contact_all=xmlencoding($contact_all);
 
 $order++;
@@ -849,8 +1397,141 @@ $contactorder=$order;
 
 
 }
+elseif($contenthandler=="resource/x-bb-asmt-survey-link")
+{
+	$referrertext=$res_single->BODY->TEXT;
+	$referrertext=xmlencoding($referrertext);
+	
+		$resdat3=$dir . "/" . $quizlink_ar["$resident"] . ".dat";//directory
+		
+	$res_single3=simplexml_load_file($resdat3);
+	//***************************************************
+	$res_quiz=$res_single3->ASMTID;
+	$res_quizid=$res_quiz['value'];
+
+	$resdat4=$dir . "/" . $res_quizid . ".dat";//directory
+
+	$res_single4=simplexml_load_file($resdat4);//quizdat
+	$resquizid=$res_single4->assessment->assessmentmetadata->bbmd_asi_object_id;
+	
+	$resquizid=trim($resquizid);
+	$resquizid=str_replace("_", "", $resquizid);
+	
+
+	
+	//*******************************************************
+	for($i=0; $i<count($survey_ar); $i++)
+	{
+		//*************************************************
+		//**************************
+	$quizidtemp=$survey_ar[$i]->getContextId();
+	
+		if($quizidtemp==$resquizid)
+		{
+				$order++;
+	$arr_allItems[$order]=$survey_ar[$i];
+
+		
+			$survey_ar[$i]->setSectionid($section_qu);
+			
+			if($referrertext!=="")
+			$survey_ar[$i]->updateDescription($referrertext);
+		//****************************************************************************************
+		$parentquid=$res_single->PARENTID;
+$parentquid=$parentquid['value'];
+	
+	
+	//***************************************************
+	if(isset($parentquid) && $parentquid!=="")
+		{
+	$parentquid = preg_replace('![^0-9]!', '', $parentquid); //ersetze alles au�er 0 bis 9
+	if($iter==false)
+	{
+	$section_qu=checkParentid($parentquid, $arr_parentids, $arr);//gibt sectionid zur�ck
+	}
+	else 
+	{
+		$section_qu=checkParentid2($parentquid, $arr_parentids_3);//gibt sectionid zur�ck
+	}
+	//*************************************************************************************
+
+		//$temp_section_ar********************************************************************
+				if(isset($arr_parentids_3["$parentquid"]))
+				{
+					//$arr_parentids_3["$parentquid"]->setSectionorder($quizidtemp);
+					$arr_parentids_3["$parentquid"]->insertSectionElement($quizidtemp);
+					
+				
+			}
+			else
+			{
+				$otherSectionid=otherSection($parentquid, $arr_parentids_3, $arr_interheadlines);
+				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
+				
+				if(isset($othersectionid_p)&& $otherSectionid!=="")
+				{
+					
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+						$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$quizidtemp);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$quizidtemp;
+						
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$quizidtemp);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$quizidtemp;
+					}
+				
+				}
+			}
+			//*************************************************************************************
+		
+		//****************************************************************************************
+		}
+	}
+//content-dat
+//*************************************************
+				
+				
+			
+	}
+}
 elseif($residentcontenthandler=="resource/x-bb-wiki")
 {
+	$content_converted=true;
+			 if(in_array($residentcontenthandler, $allresources_ok, true)){
+        
+		}
+	else
+	{
+		array_push($allresources_ok, $residentcontenthandler);
+	}
+	//***************************************
+		$parentid=$res_single->PARENTID;
+			$parentid=trim($parentid['value']);
+			
+			if(	$parentid!=="{unset id}")
+			{
+				$parentid = preg_replace('![^0-9]!', '', $parentid); //ersetze alles au�er 0 bis 9
+				//*****************
+				$available=$res_single->FLAGS->ISAVAILABLE;
+				$available=$available['value'];
+				//**************************************************
+			if($iter==false)
+			{
+				$section=checkParentid($parentid, $arr_parentids, $arr);//gibt sectionid zur�ck
+			}
+			else 
+			{
+				$section=checkParentid2($parentid, $arr_parentids_3);//gibt sectionid zur�ck
+			}
+			//**************************************************
 	$mod_label=false;
 	$wiki_id++;
 		$wiki_title=$res_single->name;
@@ -863,6 +1544,7 @@ elseif($residentcontenthandler=="resource/x-bb-wiki")
 	$wikiitem= new wiki ($wiki_id, $wiki_title, $wiki_des, "1");
 $arr_wikis[]=$wikiitem;
 	$wikipageid=0;
+	$wikipagetitle_ar=array();
 foreach($res_single->pages->page as $wikipage)
 {
 	$versions= count($wikipage->versions->version);
@@ -876,7 +1558,16 @@ foreach($res_single->pages->page as $wikipage)
 		$v++;
 		if($v==$versions){
 		$wikipagetitle= xmlencoding($version->name);
-		
+		//control if wikipagetitle exists
+		if (in_array(strtolower($wikipagetitle), $wikipagetitle_ar)) {
+			$wikipagetitle= $wikipageid ."_" .$wikipagetitle;
+			$wikipagetitle_ar[]=strtolower($wikipagetitle);
+		}
+		else
+		{
+			$wikipagetitle_ar[]=strtolower($wikipagetitle);
+			$wikipagetitle= $wikipageid ."_" .$wikipagetitle;
+		}
 		$timestamp=$version->createdOn;
 $dtime=preg_replace("/MESZ/", "", $timestamp);
 $dtime=trim($dtime);
@@ -903,6 +1594,7 @@ $dtime=trim($dtime);
 		
 		}//for
 		}//if
+		
 		$wikipagetext=xmlencoding($wikipagetext);
 		$wikipage= new wikipage ($wikipageid, $wikipagetitle, $wikipagetext, $timestamp_new);
 		$wikiitem->setPages($wikipage);
@@ -910,12 +1602,77 @@ $dtime=trim($dtime);
 		
 	}//foreach
 }//foreach
-	//$wikiitem= new wiki ($wikid, $wiki_title, $wiki_text, "", $section_wiki, $linkrefwiki);
-	//$arr_wikis[]=$wikiitem;
-	
+	$wikiitem= new wiki ($wikid, $wiki_title, $wiki_text, "", $section_wiki, $linkrefwiki);
+$arr_wikis[]=$wikiitem;
+	$wikipagetitle_ar=array();
+	$wikiitem->setAvailable($available);
+	//*******************************************************************
+	if(isset($arr_parentids_3["$parentid"]))
+				{
+					$arr_parentids_3["$parentid"]->insertSectionElement($wikid);
+				
+			}
+			else
+			{
+				//$temp_section_ar********************************************************************
+				$otherSectionid=otherSection($parentid, $arr_parentids_3, $arr_interheadlines);
+				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
+				if(isset($othersectionid_p)&& $otherSectionid!=="")
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$wikid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$wikid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$wikid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$wikid;
+					}
+				
+				}//*************************************************************************************
+				$wikiitem->setIndent("2");
+			}
+}
+}
+elseif($contenthandler=="resource/x-bb-wiki")
+{
 }
 elseif($residentcontenthandler=="resource/x-bb-discussionboard")//
 {
+	$content_converted=true;
+					 if(in_array($residentcontenthandler, $allresources_ok, true)){
+        
+		}
+	elseif (in_array($residentcontenthandler, $allresources_ok, false))
+	{
+		//echo "discussionboard-test";
+		array_push($allresources_ok, $residentcontenthandler);
+	}
+	//***************************************
+		$parentid=$res_single->PARENTID;
+			$parentid=trim($parentid['value']);
+			
+			if(	$parentid!=="{unset id}")
+			{
+				$parentid = preg_replace('![^0-9]!', '', $parentid); //ersetze alles au�er 0 bis 9
+				//*****************
+				$available=$res_single->FLAGS->ISAVAILABLE;
+				$available=$available['value'];
+				//**************************************************
+			if($iter==false)
+			{
+				$section=checkParentid($parentid, $arr_parentids, $arr);//gibt sectionid zur�ck
+			}
+			else 
+			{
+				$section=checkParentid2($parentid, $arr_parentids_3);//gibt sectionid zur�ck
+			}
+			//**************************************************
 $mod_label=false;
 $messagetext_all="";
 $arr_all=array();//takes embedded images and embedded files
@@ -926,6 +1683,7 @@ $forumid = preg_replace('![^0-9]!', '', $forumid); //ersetze alles au�er 0 bis
 //****************************************************************************************
 $title=$res_single->TITLE;
 $forumtitle=xmlencoding($title['value']);
+$forumtitle="Forum content: " . $forumtitle;
 $forumdescription=$res_single->DESCRIPTION->TEXT;
 $forumdescription=xmlencoding($forumdescription);
 //*****************************************************
@@ -938,14 +1696,14 @@ foreach($sxi2 as $mess )
 {
 
 	$messagetitle=$mess->MSG->TITLE;
-	
+	if(isset($messagetitle) && $messagetitle!=="")
+	{
 	$messagetitle=xmlencoding($messagetitle['value']);
 
 	
 	$messagetext=$mess->MSG->MESSAGETEXT->TEXT;
 
-	if(isset($messagetitle) && $messagetitle!=="")
-	{
+	
 		
 	$zwischen=xmlencoding("<h3>" . $messagetitle .  "</h3>" . $messagetext . "<br><br>");
 	$messagetext_all.=$zwischen;
@@ -957,56 +1715,70 @@ foreach($sxi2 as $mess )
 
 //************************************************************************************
 
-		/*$forumitem= new page ($forumid, $forumtitle, $messagetext_all, $forumdescription, $arr_all, "1");
+		$forumitem= new page ($forumid, $forumtitle, $messagetext_all, $forumdescription, $arr_all, "1");
 		$arr_pages[]=$forumitem;
 		$order++;
-		$arr_allItems[$order]=$forumitem;*/
-	
+		$arr_allItems[$order]=$forumitem;
+		$forumitem->setAvailable($available);
+	//*******************************************************************
+	if(isset($arr_parentids_3["$parentid"]))
+				{
+					$arr_parentids_3["$parentid"]->insertSectionElement($forumid);
+				
+			}
+			else
+			{
+				//$temp_section_ar********************************************************************
+				$otherSectionid=otherSection($parentlinkid, $arr_parentids_3, $arr_interheadlines);
+				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
+				if(isset($othersectionid_p)&& $otherSectionid!=="")
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$forumid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$forumid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$forumid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$forumid;
+					}
+				
+				}//*************************************************************************************
+				$forumitem->setIndent("2");
+			}
 }
-elseif($residentcontenthandler=="resource/x-bb-link")//Verlinkung von Tests
+}
+elseif($contenthandler=="resource/x-bb-asmt-test-link")
 {
-	
-	$referrer=$res_single->REFERRER;
-	$referrerid=$referrer['id'];
 
-	$resdat2=$dir . "/" . $referrerid . ".dat";//directory
-	$res_single2=simplexml_load_file($resdat2);
-	$parentquid=$res_single2->PARENTID;
-	$parentquid=$parentquid['value'];
-	$referrertext=$res_single2->BODY->TEXT;
 
-if(isset($parentquid) && $parentquid!=="")
-		{
-	$parentquid = preg_replace('![^0-9]!', '', $parentquid); //ersetze alles au�er 0 bis 9
-	if($iter==false)
-	{
-	$section_qu=checkParentid($parentquid, $arr_parentids, $arr);//gibt sectionid zur�ck
-	}
-	else 
-	{
-		$section_qu=checkParentid2($parentquid, $arr_parentids_3);//gibt sectionid zur�ck
-	}
-
-	//*****************************
-	$referrerto=$res_single->REFERREDTO;
-	$referrertoid=$referrerto['id'];
-	
-	$resdat3=$dir . "/" . $referrertoid . ".dat";//directory
+		$resdat3=$dir . "/" . $quizlink_ar["$resident"] . ".dat";//directory
+		
 	$res_single3=simplexml_load_file($resdat3);
+	$available=$res_single3->FLAGS->ISAVAILABLE;
+				$available=$available['value'];
 	//***************************************************
+	$referrertext=$res_single->BODY->TEXT;
+	$referrertext=xmlencoding($referrertext);
+	
 	$res_quiz=$res_single3->ASMTID;
 	$res_quizid=$res_quiz['value'];
 
 	$resdat4=$dir . "/" . $res_quizid . ".dat";//directory
 
-	$res_single4=simplexml_load_file($resdat4);
+	$res_single4=simplexml_load_file($resdat4);//quizdat
 	$resquizid=$res_single4->assessment->assessmentmetadata->bbmd_asi_object_id;
 	
 	$resquizid=trim($resquizid);
 	$resquizid=str_replace("_", "", $resquizid);
-	//$t2=$res_single4->assessment;
-	//echo $t2['title'];
-	//echo "<br>";
+	
+
+	
 	
 	//*******************************************************
 	for($i=0; $i<count($quiz_ar2); $i++)
@@ -1017,62 +1789,402 @@ if(isset($parentquid) && $parentquid!=="")
 	
 		if($quizidtemp==$resquizid)
 		{
-	//$t1=$res_single4->assessment;
-	//echo $t1['title'];
-	//echo "<br>";
-			//echo $quiz_ar[$i]->getName();
-			//echo "<br>";
+				$order++;
+	$arr_allItems[$order]=$quiz_ar2[$i];
+
 		
-			$quiz_ar2[$i]->setSectionid($section_qu);
+		
+			
 			if($referrertext!=="")
 			$quiz_ar2[$i]->updateDescription($referrertext);
+		//****************************************************************************************
+		$parentquid=$res_single->PARENTID;
+$parentquid=$parentquid['value'];
+	$quiz_ar2[$i]->setAvailable($available);
+	
+	//***************************************************
+	if(isset($parentquid) && $parentquid!=="")
+		{
+	$parentquid = preg_replace('![^0-9]!', '', $parentquid); //ersetze alles au�er 0 bis 9
+	if($iter==false)
+	{
+	$section_qu=checkParentid($parentquid, $arr_parentids, $arr);//gibt sectionid zur�ck
+	}
+	else 
+	{
+		$section_qu=checkParentid2($parentquid, $arr_parentids_3);//gibt sectionid zur�ck
+	}
+	//*************************************************************************************
+	$quiz_ar2[$i]->setSectionid($section_qu);
+		//$temp_section_ar********************************************************************
+				if(isset($arr_parentids_3["$parentquid"]))
+				{
+					
+					$arr_parentids_3["$parentquid"]->insertSectionElement($quizidtemp);
+					
+				
+			}
+			else
+			{
+				$otherSectionid=otherSection($parentquid, $arr_parentids_3, $arr_interheadlines);
+				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
+				
+				if(isset($othersectionid_p)&& $otherSectionid!=="")
+				{
+					
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+						$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$quizidtemp);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$quizidtemp;
+						
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$quizidtemp);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$quizidtemp;
+					}
+				
+				}
+				$quiz_ar2[$i]->setIndent("2");
+			}
+			//*************************************************************************************
+		
+		//****************************************************************************************
 		}
 	}
 //content-dat
 //*************************************************
+				
+				
+			
+	}
 
-	for($i=0; $i<count($quiz_ar); $i++)
-	{
-			$quizidtemp=$quiz_ar[$i]->getId();
+}
+elseif($contenthandler=="resource/x-plugin-scormengine")
+{
+	$title=$res_single->TITLE;
+		$title=$title['value'];
+			$available=$res_single->FLAGS->ISAVAILABLE;
+				$available=$available['value'];
+$scormtitle=xmlencoding($title);
+$arr_scorm[]=$scormtitle;
+$arrtemp=array();
+$parentid = preg_replace('![^0-9]!', '', $parentid); //ersetze alles au�er 0 bis 9
+				$labelt="SCORM: " . $scormtitle;
+				//************************************************************************
+				$labelitem= new label ($labelid, "SCORM", $labelt,  $section, $arrtemp, $labelid);
+				$order++;
+				//$labelitem->setOrder($order);
+				$arr_allItems[$order]=$labelitem;
+				$arr_labels[]=$labelitem;
+				$labelitem->setAvailable($available);
+				if(isset($arr_parentids_3["$parentid"]))
+				{
+					$arr_parentids_3["$parentid"]->insertSectionElement($labelid);
+				
+			}
+			else
+			{
+				//$temp_section_ar********************************************************************
+				$otherSectionid=otherSection($parentid, $arr_parentids_3, $arr_interheadlines);
+				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
+				if(isset($othersectionid_p)&& $otherSectionid!=="")
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$labelid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$labelid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$labelid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$labelid;
+					}
+				
+				}//*************************************************************************************
+				$labelitem->setIndent("2");
+			}
+				$labelid++;
+				
+			}//**********************************************************
 
-		if($quizidtemp==$resquizid)
-		{
-	
-			$quiz_ar[$i]->setSectionid($section_qu);
+elseif($contenthandler=="resource/x-bb-folder")
+{
+$content_converted=true;	
+ 				 if(in_array($contenthandler, $allresources_ok, true)){
+        
 		}
+	else
+	{
+		array_push($allresources_ok, $contenthandler);
+	}
 	
+	//********************************************************
+	/*$textbeifolder=$res_single->BODY->TEXT;
+	$textbeifolder=trim($textbeifolder);
+	$textbeifolder=xmlencoding($textbeifolder);
+	$arrtemp=array();
+$parentid = preg_replace('![^0-9]!', '', $parentid); //ersetze alles au�er 0 bis 9
+				
+				//************************************************************************
+				$labelitem= new label ($labelid, "Foldertitle", $textbeifolder,  $section, $arrtemp, $labelid);
+				$order++;
+				//$labelitem->setOrder($order);
+				$arr_allItems[$order]=$labelitem;
+				$arr_labels[]=$labelitem;
+				if(isset($arr_parentids_3["$parentid"]))
+				{
+					$arr_parentids_3["$parentid"]->setSectionorder($labelid);
+				
+			}
+			else
+			{
+				//$temp_section_ar********************************************************************
+				$otherSectionid=otherSection($parentid, $arr_parentids_3, $arr_interheadlines);
+				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
+				if(isset($othersectionid_p)&& $otherSectionid!=="")
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$labelid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$labelid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$labelid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$labelid;
+					}
+				
+				}//*************************************************************************************
+			}
+				$labelid++;*/
+}
+
+//resource/x-bb-assignment
+elseif($residentcontenthandler=="resource/resource/x-bb-assignment")
+{
+//$title=$res_single->TITLE;
+//$assignmenttitle=xmlencoding($title['value']);
+//$arr_assignment[]=$assignmenttitle;
+}
+elseif($contenthandler=="resource/x-bb-video")
+{
+	$title=$res_single->TITLE;
+$videotitle=xmlencoding($title['value']);
+
+//*******************************************************
+foreach ($res_single->FILES->FILE->LINKNAME as $file) {
+			$parentid=$res_single->PARENTID;
+			$parentid=trim($parentid['value']);
+			
+			if(	$parentid!=="{unset id}")
+			{
+				$parentid = preg_replace('![^0-9]!', '', $parentid); //ersetze alles au�er 0 bis 9
+				//*****************
+				$available=$res_single->FLAGS->ISAVAILABLE;
+				$available=$available['value'];
+				//**************************************************
+			if($iter==false)
+			{
+				$section=checkParentid($parentid, $arr_parentids, $arr);//gibt sectionid zur�ck
+			}
+			else 
+			{
+				$section=checkParentid2($parentid, $arr_parentids_3);//gibt sectionid zur�ck
+			}
+			//**************************************************
+			}//**************************************************ifparentunsetid
+			$filename=$file['value']; //richtiger Dateiname
+			//***********************************************************************
+			$filename2=$res_single->FILES->FILE->NAME; // mit xid kein Dateiname
+					$zeichen=strpos($filename2, "/");
+					//**************************************************
+					if($zeichen=== false)
+					{
+	
+					}
+					else
+					{
+						$filename2=substr($filename2, 1);//ohne "/" vor dem Dateinamen
+					}
+		//***************************************************************************
+		$fname=VerzeichnisDurchsuchen3($dir, $filename2);
+			$fname[1]=trim($fname[1]);
+		
+			if($fname[1]=="")
+			{
+		$origname=$filename3;
+			$fname=VerzeichnisDurchsuchen3($dir, $filename3);
+			}
+			else
+			{
+				$origname=$filename2;
+			}
+			$fname[1]=trim($fname[1]);
+			//************************************************************************
+			if(stripos(strtolower($fname[1]), ".mp4") !== false || stripos(strtolower($fname[1]), ".mov") !== false ){
+				//******************
+				$indexhtmtext="<p>HTML files get not converted.</p>";
+				$arrtemp=array();
+				$labelt="Video: " . $origname . "," . $fname[1];
+				$labelt=xmlencoding($labelt);
+				//************************************************************************
+				$labelitem= new label ($labelid, "Video", $labelt,  $section, $arrtemp, $labelid);
+				$order++;
+				//$labelitem->setOrder($order);
+				$arr_allItems[$order]=$labelitem;
+				$arr_labels[]=$labelitem;
+				$labelitem->setAvailable($available);
+				if(isset($arr_parentids_3["$parentid"]))
+				{
+					$arr_parentids_3["$parentid"]->insertSectionElement($labelid);
+				
+			}
+			else
+			{
+				//$temp_section_ar********************************************************************
+				$otherSectionid=otherSection($parentid, $arr_parentids_3, $arr_interheadlines);
+				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
+				if(isset($othersectionid_p)&& $otherSectionid!=="")
+				{
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$labelid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$labelid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$labelid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$labelid;
+					}
+				
+				}//*************************************************************************************
+				$labelitem->setIndent("2");
+			}
+				$labelid++;
+				
+			}//************************************************************************
+}//foreach
+}
+//elseif*/
+//elseif
+/*elseif(isset($res_single->assessment->assessmentmetadata->bbmd_assessmenttype) && $res_single->assessment->assessmentmetadata->bbmd_assessmenttype=="Test")//Verlinkung von Tests
+
+{
+	$exportlogData.=  "sectionid:  \n";
+	$quizid=$res_single->assessment->assessmentmetadata->bbmd_asi_object_id;
+	$quizid=trim($quizid);
+		$quizid=str_replace("_", "", $quizid);
+	$exportlogData.=  "quizid: " . $quizid ." \n";
+	//$contentdat=$res_single->CONTENT;
+	//$contentdat=trim($contenthandler['id']);
+	if(in_array($quizid, $quizzids_ar, true))
+	{
+	//$key = array_search($quizid, $quizzids_ar);
+	//$parentquid=$res_single->PARENTID;
+	//$parentquid=$parentquid['value'];
+	$parentquid=$quizlink_ar["$quizid"];
+	
+	$exportlogData.=  "qpar: " . $parentquid ." \n";
+				
+				//$temp_section_ar********************************************************************
+				if(isset($arr_parentids_3["$parentquid"]))
+				{
+					$arr_parentids_3["$parentquid"]->setSectionorder($quizid);
+					$exportlogData.=  "sectionidparent:  \n";
+				
+			}
+			else
+			{
+				$otherSectionid=otherSection($parentquid, $arr_parentids_3, $arr_interheadlines);
+				$othersectionid_p=$otherSectionid[1];
+				$tempvalue=$otherSectionid[0];
+				$exportlogData.=  "sectionidother: " . $othersectionid_p ."\n";
+				if(isset($othersectionid_p)&& $otherSectionid!=="")
+				{
+					$exportlogData.=  "tempvalue: " . $tempvalue ."\n";
+					if(isset($temp_section_ar["$tempvalue"]))
+					{
+						$temp_othersectionid_val=$temp_section_ar["$tempvalue"];
+				$arr_parentids_3["$othersectionid_p"]->insertSection($temp_othersectionid_val,$quizid);
+				//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$quizid;
+					}
+					else
+					{
+						$arr_parentids_3["$othersectionid_p"]->insertSection($otherSectionid[0],$quizid);
+						//$temp_othersectionid=$pageid;
+						$temp_section_ar["$tempvalue"]=$quizid;
+					}
+				
+				}//*************************************************************************************
+			}
+			
 	}
 
-	for($i=0; $i<count($survey_ar); $i++)
+}*/
+
+else
+{
+	 if(in_array($contenthandler, $allresources, true)OR in_array($residentcontenthandler, $allresources, true)&&$content_converted==false){
+       
+    }
+	else
 	{
-	$quizidtemp=$survey_ar[$i]->getContextId();
-	
-	if($quizidtemp==$resquizid)
-	{
-	
-	$survey_ar[$i]->setSectionid($section_qu);
-	
+		if(in_array($contenthandler, $allresources, true)OR in_array($residentcontenthandler, $allresources, true)&&$content_converted==false){
+		}
+		else
+		{
+		 array_push($allresources, $contenthandler);
+		}
+		
 	}
-	
-	}
-	//**********************************************
-		}//if isset
-}//elseif
+}
 
 }//foreach
 //**************************************************
 if(isset($contactid)&& $contactid!=="")
 {
-$contactitem= new page ($contactid, "Kontakt", $contact_all, "", "", "1");
+$contactitem= new page ($contactid, "Contact", $contact_all, "", "", "0");
 $arr_pages2["$contactid"]=$contactitem;
 $arr_pages[]=$contactitem;
 $arr_allItems[$contactorder]=$contactitem;
-$arr_parentids_3["1"]->setSectionorder($contactid);
+$arr_parentids_3["0"]->setSectionorder($contactid);
 
 
 
 }
+if(isset($exportlogData)&& $exportlogData!=="")
+{
+	/*$logdata=$str = str_replace("\n", '<br>', $exportlogData);
+	$logdata=xmlencoding($logdata);
+	$logid="12345678";
+	$logitem= new page ($logid, "Logdata", $logdata, "", "", "1");
+$arr_pages2["$logid"]=$logitem;
+$arr_pages[]=$logitem;
+$order++;
+$arr_allItems[$order]=$logitem;
+$arr_parentids_3["1"]->setSectionorder($logid);*/
+}
 //****************************************************
-echo "Wikis: " . count($arr_wikis);
+//echo "Wikis: " . count($arr_wikis);
+//**************************************************************
 
 ?>

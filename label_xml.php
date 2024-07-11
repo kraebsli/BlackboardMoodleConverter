@@ -11,7 +11,17 @@ if(count($arr_labels)>0)
 $labelid=$arr_labels[$i]->getId();
 $labelparentid=$arr_labels[$i]->getParentid();
 $labeltitle=$arr_labels[$i]->getTitle();
+if(strlen($labeltitle)>250)
+{
+		$labeltitle=substr($labeltitle,0,250);
+}
 $labeltext=$arr_labels[$i]->getText();
+if (stripos(strtolower($labeltext), "@X@EmbeddedFile.requestUrlStub") !== false)
+{
+	$labeltext=$labeltitle . ": iFrame Content cannot be displayed.";
+	$exportlogData.="iFrame Content cannot be displayed in  " . $labeltitle ."\n";
+	
+}
 $section=$arr_labels[$i]->getSection();
 $section=$section+$sectionstart;
 $labelpfad=$direxport . "/activities/label_" . $labelid;

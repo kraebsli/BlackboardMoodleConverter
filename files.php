@@ -6,7 +6,7 @@
 //**************************moodle files xml
 $xmlfile2='<?xml version="1.0" encoding="'.$charset.'"?>'."\n";
 $xmlfile2.="<files>";
-
+$allfiles=count($arr_files);
 
 //***************************************************
 for($i=0; $i < count($arr_files); $i++)
@@ -16,18 +16,25 @@ for($i=0; $i < count($arr_files); $i++)
 
 	$parentid=$arr_files[$i]->getParentId();
 	$f2=$arr_files[$i]->getName2();//label NAME in .dat-Datei
+	//$exportlogData.="filenamenew: " . $f2 ."\n";
 	//kann sein, dass kein XID enthalten ist, sondern direkt der Dateiname angegeben ist. Dann befindet sich die Datei
 	//in einem gleichnamigen RES-Ordner
 	$section=$arr_files[$i]->getSection();
 	$section=$section+$sectionstart;
 	//***********************************************
+	
 	$result=VerzeichnisDurchsuchen3($dir, $f2);
 
 	//********************************************
 
 	$oldname=$result[0];
 	$filename_new=$result[1];
+//	$exportlogData.="filenamenew: " . $filename_new ."\n";
+	
 	$pdfcorrupt="0";
+	$videocorrupt="0";
+
+
 	//*********************************************
 	$filename_separated=explode(".", $filename_new);
 	//$dateiendung="." . $filename_separated[1];
@@ -56,11 +63,15 @@ for($i=0; $i < count($arr_files); $i++)
 	{
 		$mimetype="audio/mp3";
 	}
+	elseif($filename_separated[1]=="png")
+	{
+		$mimetype="image/png";
+	}
 
 	//*********************************************************************************
-	if(is_file($oldname) && $filename_separated[1]=="pdf")
+	/*if(is_file($oldname) && $filename_separated[1]=="pdf")
 	{
-		$fp = fopen($oldname, 'r');
+		/*$fp = fopen($oldname, 'r');
 
 		// move to the 0th byte
 		fseek($fp, 0);
@@ -73,17 +84,20 @@ for($i=0; $i < count($arr_files); $i++)
 		else
 		{
 			$pdfcorrupt="1";
-			echo "The PDF File is  Corrupted: " . $filename_new;
-			echo "<br>";
+			$exportlogData.="The PDF File is  corrupted: " . $filename_new .". The file in the course is indicated as brokenfile.png.\n";
+			//echo "<br>";
+			
 		}
 		fclose($fp);
-	}
-	elseif(is_file($oldname) && $filename_separated[1]!=="pdf")
+	}*/
+
+	if(is_file($oldname) && $filename_separated[1]=="mp4")
 	{
-		$pdfcorrupt="0";
+		$videocorrupt="1";
+		
 	}
 	//*******************************************
-	if(is_file($oldname) && $pdfcorrupt=="0")
+	if(is_file($oldname) && $pdfcorrupt=="0" && $videocorrupt=="0" )
 	{
 
 		$temppath=$dir . "/temp/";
@@ -124,13 +138,20 @@ for($i=0; $i < count($arr_files); $i++)
 			}//if isset oldname
 		}//if dir temppath
 	}
+	elseif($videocorrupt=="1")
+	{
+		$videocorrupt=0;
+	}
 	else
 	{
-
-		$filename_new="kaputtedatei.png";
-		$oldname="moodle_src/kaputtedatei.png";
+		$exportlogData.="The file is  not found in the archive: " . $filename_new .". The file in the course is indicated as brokenfile.png.\n";
+$arrfiles_not[]=$filename;
+		$filename_new="brokenfile.png";
+		$oldname="brokenfile.png";
 		$temppath=$dir . "/temp/";
-		$newname= $temppath . "kaputtedatei.png";
+		$newname= $temppath . "brokenfile.png";
+		$mimetype="image/png";
+	
 		copy($oldname, $newname);
 	 $filesize    = filesize($newname);
 	 $contenthash = sha1_file($newname);
@@ -139,7 +160,8 @@ for($i=0; $i < count($arr_files); $i++)
 
 	 if(is_dir($hashfilepath))
 	 {
-	 	 
+	 	 $hashfilepath_mit_file=$hashfilepath . "/" . $contenthash;
+	 	copy($newname, $hashfilepath_mit_file);
 	 }
 	 else
 	 {
@@ -168,17 +190,25 @@ if($parentid!=="")
 
 while($p!=="")
 {
-	
+
+if(isset($arr["$p"]))
+{
 	$n=$arr["$p"]->getName();//ArrayFolder mit Schlüssel folderid;
 // kann auch --TOP-- sein
 	$pfad_arr[]=$n;
 	$p=$arr["$p"]->getParentId();
-	
+
+}
+else
+{
+	break;
+}
 	
 }
 //***********************
+
 $s=0;
-if(count($pfad_arr>0))
+if(count($pfad_arr)>0)
 {
 	$s=count($pfad_arr)-1;
 	for($j=$s; $j>=0; $j--)
@@ -242,7 +272,7 @@ $folderIDArray[]=$fileid;
      </file>";
 	}
 			}
-	elseif($modus=="multiplefolders")
+	elseif($modus=="multiplefolders" && $videocorrupt=="0")
 	{
 		$mod="mod_folder";
 		$contextid_help=$parentid;
@@ -266,6 +296,7 @@ $folderIDArray[]=$fileid;
 		}
 		
 		//echo $filename_new;
+		
 		//echo "<br>";
 $folderIDArray[]=$fileid;
 			$xmlfile2 .="<file id=\"$fileid\">
@@ -292,6 +323,8 @@ $folderIDArray[]=$fileid;
 			
 			else 
 			{
+				if($videocorrupt=="0")
+				{
 				$xmlfile2 .="<file id=\"$fileid\">
 				<contenthash>" . $contenthash . "</contenthash>
     <contextid>" . $fileid . "</contextid>
@@ -311,8 +344,52 @@ $folderIDArray[]=$fileid;
     <license>$@NULL@$</license>
     <sortorder>1</sortorder>
      </file>";
+				}
 			}
 }
+//*********************************logfiles
+
+//make file, data should be available
+$myFile = "exportlog.txt";
+$fh = fopen($myFile, 'w') or die("can't open file");
+
+fwrite($fh, $exportlogData);
+fclose($fh);
+ $filesize    = filesize($myFile);
+	 $contenthash = sha1_file($myFile);
+	 $hashpath    = substr($contenthash, 0, 2);
+	 $hashfilepath=$direxport . "/files/" .$hashpath;
+
+	
+		 
+	 	mkdir($hashfilepath, 0700);
+	 	$hashfilepath_mit_file=$hashfilepath . "/" . $contenthash;
+	 	copy($myFile, $hashfilepath_mit_file);
+		//***************************file xml
+	 $fileid="12335679";
+	$mimetype="application/txt";
+	 $xmlfile2 .="<file id=\"$fileid\">
+				<contenthash>" . $contenthash . "</contenthash>
+    <contextid>" . $fileid . "</contextid>
+    <component>mod_resource</component>
+    <filearea>content</filearea>
+    <itemid>0</itemid>
+    <filepath>/</filepath>
+    <filename>" . $myFile . "</filename>
+    <userid>$@NULL@$</userid>
+    <filesize>" . $filesize . "</filesize>
+    <mimetype>". $mimetype . "</mimetype>
+    <status>0</status>
+    <timecreated>" . $aktuellesdatum . "</timecreated>
+    <timemodified>" . $aktuellesdatum . "</timemodified>
+    <source>$@NULL@$</source>
+    <author>$@NULL@$</author>
+    <license>$@NULL@$</license>
+    <sortorder>1</sortorder>
+     </file>";
+	 //**************************************************
+	 
+	 
 //*********************************************************embedded files
 //*********************************************************************
 include ("fileembedded_label_xml.php");

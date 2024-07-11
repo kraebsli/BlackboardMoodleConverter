@@ -18,6 +18,7 @@
  	var $description;
  	function folder($n,$i,$p)
  	{
+		
  		$this->name=$n;
  		$this->id=$i;
  		$this->parentid=$p;
@@ -32,6 +33,10 @@
  	}
  	function getName()
  	{
+		if(strlen($this->name)>15)
+		{
+			$this->name=substr($this->name,0,250);
+		}
  		
  		return $this->name;
  	}
@@ -59,6 +64,32 @@
  	{
  	
  		$this->description =$d;
+ 	}
+	function getAvailable()
+ 	{
+ 			
+ 		return $this->available;
+ 	}
+ 	function setAvailable($a)
+ 	{
+ 	if($a==true)
+	{
+ 		$this->available ="1";
+	}
+	else
+	{
+		$this->available ="0";
+ 	}
+	}
+	function getIndent()
+ 	{
+ 		
+ 		return $this->indent;
+ 	}
+	function setIndent($in)
+ 	{
+ 		
+ 		 $this->indent=$in;
  	}
  }
 ?>

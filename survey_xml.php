@@ -14,7 +14,8 @@
 	$surveyname=$survey_ar[$i]->getName();
 	$contextid=$survey_ar[$i]->getContextId();
 	//echo "contextid         " . $contextid . "   categoryid " . $categoryid . "<br><br>";
-	
+	$indent=$survey_ar[$i]->getIndent();
+$available=$survey_ar[$i]->getAvailable();
 	
 	$surveydescription=$survey_ar[$i]->getDescription();
 	$surveysectionid=$survey_ar[$i]->getSectionid();
@@ -56,9 +57,15 @@ for($j=0;$j<$zahlderItems; $j++)
 	$surveyitemid=$surveyitems[$j]->getId();
 	
 	$surveyitemname=$surveyitems[$j]->getQuestiontext();
-	$surveyitemname=html_entity_decode ($surveyitemname);
+	$surveyitemname=html_entity_decode($surveyitemname, ENT_QUOTES | ENT_XML1, 'UTF-8');
+	//$surveyitemname=html_entity_decode ($surveyitemname);
 	$surveyitemname=strip_tags($surveyitemname);
-
+if(strlen($surveyitemname)>240)
+		{
+			$exportlogData.= "Original survey question name of survey " . $surveyname . "too long. It had to be shortened. Here the original text: " . $surveyitemname ."\n";
+			$surveyitemname=substr($surveyitemname,0,250);
+			
+		}
 	$surveytype=$surveyitems[$j]->getQuestiontype();
 	
 	if($surveytype=="multichoice")
@@ -105,10 +112,10 @@ for($j=0;$j<$zahlderItems; $j++)
 	}
 	$xmlfile9.="<item id=\"" . $surveyitemid . "\">
 	<template>0</template>
-	<name>$surveyitemname</name>
+	<name>". $surveyitemname . "</name>
 	<label/>
-	<presentation>$surveytext</presentation>
-	<typ>$surveytype</typ>
+	<presentation>". $surveytext ."</presentation>
+	<typ>" . $surveytype . "</typ>
 	<hasvalue>1</hasvalue>
 	<position>1</position>
 	<required>0</required>
@@ -150,8 +157,8 @@ $xmlfile12.="<module id=\"" . $contextid . "\" version=\"" . $surveymoduleversio
   <idnumber></idnumber>
   <added>0</added>
   <score>0</score>
-  <indent>0</indent>
-  <visible>1</visible>
+  <indent>" . $indent . "</indent>
+  <visible>" . $available . "</visible>
   <visibleold>1</visibleold>
   <groupmode>0</groupmode>
   <groupingid>0</groupingid>

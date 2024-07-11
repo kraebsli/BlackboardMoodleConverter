@@ -14,10 +14,7 @@ $incfeedback=array();
 $scorevalue="";
 //$multichoiceid=0;
 $optionenzaehler=0;
-echo "<h3>";
-echo $quiz2_demo;
-echo "<br>";
-echo "</h3>";
+
 //***************************Frageninhalte
 foreach ($question->presentation->flow->flow as $flow) {
 	if($flow['class']=="QUESTION_BLOCK")//Fragetext
@@ -26,8 +23,9 @@ foreach ($question->presentation->flow->flow as $flow) {
 		//Fragetext
 		include("questiontext.php");
 		$qt=lueckentextfrage($qt);//moodlestring
-		echo $questiontitle;
-		echo "<br>";
+		$qt=xmlencoding($qt);
+		//echo $questiontitle;
+		//echo "<br>";
 	}
 }
 //**************************************************
@@ -49,7 +47,7 @@ foreach ($question->resprocessing->respcondition as $l) {
 			//***********************
 			//*******aus den antworten den fragetext generieren***********
 			foreach ($or->varequal as $or2) {
-		
+			$or2=xmlencoding($or2);
 			$antworten[]=$or2;//array
 			if($optionenzaehler=="0")
 			{
@@ -82,23 +80,25 @@ foreach ($question->resprocessing->respcondition as $l) {
 					$cfeedback[]=$correctfeedback;
 					
 					$subfrage.="#" . $correctfeedback;
-					echo "pro Item korrekt: " . $correctfeedback;
-					echo "<br>";
-					echo "<br>";
+					//echo "pro Item korrekt: " . $correctfeedback;
+					//echo "<br>";
+					//echo "<br>";
 				}
 				elseif($abgleich2==$ifb)
 				{
 					$incorrectfeedback=$itemfeedback->flow_mat->flow_mat->material->mat_extension->mat_formattedtext;
 					$incorrectfeedback=xmlencoding($incorrectfeedback);
 					$incfeedback[]=$incorrectfeedback;
-					echo "pro Item inkorrekt: " . $incorrectfeedback;
-					echo "<br>";
+					//echo "pro Item inkorrekt: " . $incorrectfeedback;
+					//echo "<br>";
 				}
 			}
 				
 			//***********************feedback
 			}
 			$subfrage.="}";
+			$subfrage=xmlencoding($subfrage);
+		
 			//new shortanswer
 			$shanswer= new shortanswer($quid,$questionid_sh,$antworten,$cfeedback,$incfeedback, $subfrage, $shortanswerid, $questiontitle );
 			$fragen[]=$shanswer;

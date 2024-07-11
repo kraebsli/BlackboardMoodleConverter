@@ -236,6 +236,30 @@ elseif($modus=="multiplefolders")
           <title>" .  $arr_allItems[$k]->getTitle() . "</title>
           </activity>";
 					}
+					elseif ($arr_allItems[$k] instanceof quiz)
+					{
+						$sectionid=$arr_allItems[$k]->getSectionid()+$sectionstart;
+						
+		  $xmlfile.="<activity moduleid=\"" . $arr_allItems[$k]->getId() . "\" modulename=\"quiz\">
+          <directory>activities/quiz_" . $arr_allItems[$k]->getId() . "</directory>
+       <sectionid>" . $sectionid . "</sectionid>
+          <title>" .  $arr_allItems[$k]->getName() . "</title>
+        </activity>";
+
+					}
+					elseif ($arr_allItems[$k] instanceof survey)
+					{
+						$sectionid=$arr_allItems[$k]->getSectionid()+$sectionstart;
+						
+		  $xmlfile.="<activity moduleid=\"" . $arr_allItems[$k]->getContextId() . "\" modulename=\"feedback\">
+          <directory>activities/feedback_" . $arr_allItems[$k]->getId() . "</directory>
+       <sectionid>" . $sectionid . "</sectionid>
+          <title>" .  $arr_allItems[$k]->getName() . "</title>
+        </activity>";
+
+
+
+					}
 					elseif ($arr_allItems[$k] instanceof link)
 					{
 						$sectionid=$arr_allItems[$k]->getSection()+$sectionstart;
@@ -258,19 +282,30 @@ elseif($modus=="multiplefolders")
 	}//for
 }//elseif
 	
+	//**********logfile resource
+	$logfileid="12335679";
+	$xmlfile.=" <activity>
+          <moduleid>". $logfileid . "</moduleid>";
+								$xmlfile.="<sectionid>" . $extrasection ."</sectionid>";
+								$xmlfile.="<modulename>resource</modulename>
+								<title>Importlog</title>
+								<directory>activities/resource_". $logfileid . "</directory>
+    </activity>";
 	
+	
+	//*************************
 	
 //quizzes*****************************************************tests
-
+//Pool quizzes
 for($i=0; $i<count($quiz_ar); $i++)
 {
-	$sectionid=$quiz_ar[$i]->getSectionid();
+	/*$sectionid=$quiz_ar[$i]->getSectionid();
 	$sectionid=$sectionid+$sectionstart;
 $xmlfile.="<activity moduleid=\"" . $quiz_ar[$i]->getId() . "\" modulename=\"quiz\">
           <directory>activities/quiz_" . $quiz_ar[$i]->getId() . "</directory>
           <sectionid>" . $sectionid . "</sectionid>
           <title>" .  $quiz_ar[$i]->getName() . "</title>
-        </activity>";
+        </activity>";*/
 
 
 }
@@ -279,13 +314,13 @@ if(count($quiz_ar2)>0)
 {
 for($i=0; $i<count($quiz_ar2); $i++)
 {
-	$sectionid=$quiz_ar2[$i]->getSectionid();
+	/*$sectionid=$quiz_ar2[$i]->getSectionid();
 	$sectionid=$sectionid+$sectionstart;
 	$xmlfile.="<activity moduleid=\"" . $quiz_ar2[$i]->getId() . "\" modulename=\"quiz\">
           <directory>activities/quiz_" . $quiz_ar2[$i]->getId() . "</directory>
        <sectionid>" . $sectionid . "</sectionid>
           <title>" .  $quiz_ar2[$i]->getName() . "</title>
-        </activity>";
+        </activity>";*/
 
 }
 }
@@ -293,13 +328,13 @@ if(count($survey_ar)>0)
 {
 	for($i=0; $i<count($survey_ar); $i++)
 	{
-		$sectionid=$survey_ar[$i]->getSectionid();
+	/*	$sectionid=$survey_ar[$i]->getSectionid();
 		$sectionid=$sectionid+$sectionstart;
 		$xmlfile.="<activity moduleid=\"" . $survey_ar[$i]->getContextId() . "\" modulename=\"feedback\">
           <directory>activities/feedback_" . $survey_ar[$i]->getId() . "</directory>
        <sectionid>" . $sectionid . "</sectionid>
           <title>" .  $survey_ar[$i]->getName() . "</title>
-        </activity>";
+        </activity>";*/
 
 }
 }
@@ -470,7 +505,7 @@ if(count($arr_wikis)>0)
 //******************quizzes is settings
  	 for($i=0; $i<count($quiz_ar); $i++)
 {
-	$xmlfile.="<setting>
+	/*$xmlfile.="<setting>
         		<activity>quiz_" .  $quiz_ar[$i]->getId() . "</activity>
         		<name>quiz_" .  $quiz_ar[$i]->getId() . "_included</name>
         <value>1</value>
@@ -481,13 +516,14 @@ if(count($arr_wikis)>0)
         <name>quiz_" .$quiz_ar[$i]->getId() . "_userinfo</name>
         <value>0</value>
         <level>activity</level>
-      </setting>";
+      </setting>";*/
 
 }
-
+if(isset($quiz_ar2))
+{
 for($i=0; $i<count($quiz_ar2); $i++)
 {
-	$xmlfile.="<setting>
+	/*$xmlfile.="<setting>
         		<activity>quiz_" .  $quiz_ar2[$i]->getId() . "</activity>
         		<name>quiz_" .  $quiz_ar2[$i]->getId() . "_included</name>
         <value>1</value>
@@ -499,11 +535,14 @@ for($i=0; $i<count($quiz_ar2); $i++)
         <value>0</value>
         <level>activity</level>
       </setting>";
-
+*/
 }
+}
+if(isset($survey_ar))
+{
 for($i=0; $i<count($survey_ar); $i++)
 {
-	$xmlfile.="<setting>
+/*	$xmlfile.="<setting>
         		<activity>feedback_" .  $survey_ar[$i]->getId() . "</activity>
         		<name>feedback_" .  $survey_ar[$i]->getId() . "_included</name>
         <value>1</value>
@@ -515,7 +554,8 @@ for($i=0; $i<count($survey_ar); $i++)
         <value>0</value>
         <level>activity</level>
       </setting>";
-
+*/
+}
 }
 //pages in settings
 //*********
@@ -609,6 +649,38 @@ for($j=0;$j < count($sectionsequence); $j++)
         <level>activity</level>
         </setting>";
 						}
+						elseif ($arr_allItems[$k] instanceof quiz)
+					{
+					
+					$xmlfile.="<setting>
+	<activity>quiz_" .  $arr_allItems[$k]->getId() . "</activity>
+			<name>quiz_" .  $arr_allItems[$k]->getId() . "_included</name>
+        <value>1</value>
+        <level>activity</level>
+        </setting>
+        <setting>
+        <activity>quiz_"  . $arr_allItems[$k]->getId() . "</activity>
+        <name>quiz_" .$arr_allItems[$k]->getId() . "_userinfo</name>
+        <value>0</value>
+        <level>activity</level>
+        </setting>";
+						}
+						elseif ($arr_allItems[$k] instanceof survey)
+					{
+					
+					$xmlfile.="<setting>
+	<activity>feedback_" .  $arr_allItems[$k]->getId() . "</activity>
+			<name>feedback_" .  $arr_allItems[$k]->getId() . "_included</name>
+        <value>1</value>
+        <level>activity</level>
+        </setting>
+        <setting>
+        <activity>feedback_"  . $arr_allItems[$k]->getId() . "</activity>
+        <name>feedback_" .$arr_allItems[$k]->getId() . "_userinfo</name>
+        <value>0</value>
+        <level>activity</level>
+        </setting>";
+						}
 						elseif ($arr_allItems[$k] instanceof link)
 						{
 						$xmlfile.="<setting>
@@ -654,6 +726,22 @@ for($j=0;$j < count($sectionsequence); $j++)
 			
 			}
 			//************************************************************
+			//logfile settings*****************************************
+			$xmlfile.= "<setting>
+        <level>activity</level>
+        <activity>resource_" . $logfileid . "</activity>
+        <name>resource_" . $logfileid . "_included</name>
+        <value>1</value>
+      </setting>
+      <setting>
+        <level>activity</level>
+        <activity>resource_" . $logfileid . "</activity>
+          <name>resource_" . $logfileid . "_userinfo</name>
+          <value>0</value>
+          </setting>";
+			
+			
+			//**************************************************************
 			$xmlfile.=" </settings>";
     $xmlfile.="</information>\n";
          $xmlfile.="</moodle_backup>\n";

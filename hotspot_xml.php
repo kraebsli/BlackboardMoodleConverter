@@ -34,7 +34,7 @@ $xmlfileques.=" <plugin_qtype_ddmarker_question>
   <shuffleanswers>0</shuffleanswers>
             <correctfeedback>" . $qucorrfeedback . "</correctfeedback>
             <correctfeedbackformat>1</correctfeedbackformat>
-            <partiallycorrectfeedback>&lt;p&gt;Die Antwort ist teilweise richtig.&lt;/p&gt;</partiallycorrectfeedback>
+            <partiallycorrectfeedback></partiallycorrectfeedback>
             <partiallycorrectfeedbackformat>1</partiallycorrectfeedbackformat>
             <incorrectfeedback>" . $quincorrfeedback . "</incorrectfeedback>
             <incorrectfeedbackformat>1</incorrectfeedbackformat>

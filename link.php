@@ -18,7 +18,9 @@ var $url;
 var $desc;
 var $text;
 var $section;
- 	var $embedar; 	 	
+ 	var $embedar;
+var $indent;
+	 var $available;	
 //($linkid, $linktitle,$linktext, $linkurl, $section_link)
  	function link($i, $t, $te, $u,  $s, $ar)
  	{
@@ -30,6 +32,8 @@ $this->text=$te;
  		$this->url=$u;
  		$this->embedar=$ar;
 $this->section=$s;
+$this->indent=0;
+$this->available=1;
  	}
   
  function getSection()
@@ -64,6 +68,32 @@ $this->section=$s;
  	{
  		
  		return $this->embedar;
+ 	}
+	function getAvailable()
+ 	{
+ 			
+ 		return $this->available;
+ 	}
+ 	function setAvailable($a)
+ 	{
+ 	if($a==true)
+	{
+ 		$this->available ="1";
+	}
+	else
+	{
+		$this->available ="0";
+ 	}
+	}
+	function getIndent()
+ 	{
+ 		
+ 		return $this->indent;
+ 	}
+	function setIndent($in)
+ 	{
+ 		
+ 		 $this->indent=$in;
  	}
  }
 ?>

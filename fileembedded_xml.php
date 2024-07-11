@@ -3,6 +3,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
  * */
+  $allfiles=$allfiles+count($arr_files_embedded);
 for($i=0; $i < count($arr_files_embedded); $i++)
 {
 

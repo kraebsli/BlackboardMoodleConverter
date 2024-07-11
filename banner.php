@@ -34,17 +34,26 @@ foreach ($daten->resources->resource as $res) {
 	//$banner_filename=$result[1];
 //	$bild=array();
 $fileid = preg_replace('![^0-9]!', '', $banner); //ersetze alles außer 0 bis 9
-$bild=bildinlabel($banner, $dir, $labelid, $resident, $direxport);//
+$bild=bildinlabel($banner, $dir, $fileid, $resident, $direxport);//
+
+
+if(isset($bild[0])&&$bild[0]!="")
+{
 $arrmitembeddedfiles=array();
+if(isset($bild[1])&&$bild[1]!="")
+{
 $arrmitembeddedfiles[]=$bild[1];
+$arr_files_embedded_label[]=$bild[1];//nur ein Element, kein Array
+}
 $labelitem= new label ($labelid, "Banner", $bild[0],  "1", $arrmitembeddedfiles, $labelid);
 $arr_labels[]=$labelitem;
 $arr_parentids[0]->setSectionorder($labelid);
 $labelid++;
-$arr_files_embedded_label[]=$bild[1];//nur ein Element, kein Array
+
 
 $order++;
 $arr_allItems[$order]=$labelitem;
+}
 
 	}
 else 

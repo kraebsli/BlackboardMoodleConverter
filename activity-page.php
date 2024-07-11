@@ -13,6 +13,8 @@ if(count($arr_pages)>0)
 	
 	for($i=0; $i<count($arr_pages); $i++)
 	{
+		$indent=$arr_pages[$i]->getIndent();
+		$available=$arr_pages[$i]->getAvailable();
 		$pageid=$arr_pages[$i]->getId();
 		$pagetitle=$arr_pages[$i]->getTitle();
 		$pagetext=$arr_pages[$i]->getText();
@@ -46,8 +48,8 @@ $xmlfile13.="<module id=\"" . $pageid . "\" version=\"" . $pagemoduleversion . "
   <idnumber></idnumber>
   <added>0</added>
   <score>0</score>
-  <indent>0</indent>
-  <visible>1</visible>
+  <indent>" . $indent . "</indent>
+  <visible>". $available . "</visible>
   <visibleold>1</visibleold>
   <groupmode>1</groupmode>
   <groupingid>0</groupingid>
@@ -93,7 +95,7 @@ $xmlfile15.="<inforef>";
 	if(count($pagefiles)>0)
 	{
 	$xmlfile15.="<fileref>";
-	echo "count pagefiles " . count($pagefiles);
+	//echo "count pagefiles " . count($pagefiles);
 	for ($b=0; $b < count($pagefiles); $b++)
 	{
 	$fileid=$pagefiles[$b]->getId();
@@ -132,7 +134,8 @@ if(count($arr_pages2)>0)
 			
 			$pagedescription=$arp->getDescription();
 			$pagefiles=$arp->getAr();
-
+$indent=$arp->getIndent();
+		$available=$arp->getAvailable();
 			$section=$arp->getSection();
 			$section=$section+$sectionstart;
 			$pagepfad=$direxport . "/activities/page_" . $pageid;
@@ -161,8 +164,8 @@ if(count($arr_pages2)>0)
   <idnumber></idnumber>
   <added>0</added>
   <score>0</score>
-  <indent>0</indent>
-  <visible>1</visible>
+  <indent>" . $indent. "</indent>
+  <visible>" . $available . "</visible>
   <visibleold>1</visibleold>
   <groupmode>1</groupmode>
   <groupingid>0</groupingid>

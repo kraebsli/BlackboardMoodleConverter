@@ -50,7 +50,7 @@ foreach ($question->presentation->flow->flow as $flow) {
 				else
 				{
 					$loesung="true";
-					$antwort=new answer ($antwortid, $loesung, $feedback, $loesung);
+					$antwort=new answer ($antwortid, $loesung, $feedback, $loesung, "");
 					$answer_ar[]=$antwort;
 					$antwortid++;
 				}

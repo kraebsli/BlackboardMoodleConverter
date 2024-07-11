@@ -1,13 +1,18 @@
 <?php
 //$contextid=10;
 //$categoryid=1;
+//***********************************Questions
 foreach ($daten->resources->resource as $res) {
 	
 	$resident=$res['identifier'];
 	$resdat=$dir . "/" . $resident . ".dat";//directory
+
 	$res_single=simplexml_load_file($resdat);
 	$test=$res_single->assessment;
 	$seltype="";
+	$aleat=false;
+	if(isset($test->assessmentmetadata->bbmd_assessmenttype))
+	{
 	$asstype=trim($test->assessmentmetadata->bbmd_assessmenttype);
 	if($asstype=="Test")
 	{
@@ -60,22 +65,14 @@ $seltype=trim($seltype['seltype']);
 		//echo $test['title'] . "enthaelt unsymmetrisches Verhaeltnis von Zahl der Fragen zu Anzahl anzuzeigener Fragen im Fragensatz.";
 		
 		}*/
-	//***********************************************************
-	foreach ($test->section->section->selection_ordering->selection->or_selection->selection_metadata as $s) {
-//$s2=$s->selection_ordering->selection->or_selection->selection_metadata;
-$s=trim($s);
-$quids=str_replace("_", "", $s);
-		if(isset($questions_ar["$quids"]))
-		{
+				//***********************************************************
+				//foreach ($test->section->section as $sec){
+		//$selectionnumber=$sec->selection_ordering->selection->selection_number;
+			//	}
+
 	
-		$quiz_p->setPoolQuestions($questions_ar["$quids"]);//Frage in Quiz einfügen
-		}
-		//********************************************************
-	}//foreach
-	
-	$frageimSatz=true;
 	//weitere Fragen, nicht aus Fragensatz
-	//********************************************************************************
+$frageimSatz=true;
 	foreach ($test->section as $s) {
 		foreach ($s->item as $question) {
 
@@ -90,6 +87,8 @@ $quids=str_replace("_", "", $s);
 		//*************************************************************
 		$answer_ar=array();
 		$q= $question->itemmetadata->bbmd_questiontype;//Fragetyp
+		//echo $q;
+		//echo "<br>";
 		$q=trim($q);
 		$questiontitle=trim($question['title']);
 	
@@ -104,6 +103,8 @@ $quids=str_replace("_", "", $s);
 			$df="";
 		}
 		;
+	
+	//********************************************************************************
 		//***********Multiple Choice*****************************************
 		if($q=="Multiple Choice" or $q=="Multiple Answer")
 		{
@@ -137,8 +138,8 @@ $quids=str_replace("_", "", $s);
 		else if($q=="Essay" or $q=="File Upload")//************ESSAY**************************
 		//************************************************************
 		{
-			echo $quid;
-			echo "<br>";
+			//echo $quid;
+			//echo "<br>";
 			include("essay-fileupload_bbm.php");
 			$quiz_p->setQuestions($ques);//Frage in Quiz einfügen
 			$questions_ar["$quid"]=$ques;
@@ -214,21 +215,72 @@ $quids=str_replace("_", "", $s);
 	
 			echo "<br>";
 			echo "<br>";
-			echo "Frage " . $questiontitle . " (Fragetyp ". $q . " nicht konvertiert)";
+			echo "Question " . $questiontitle . " of questiontype ". $q . " not converted.\n";
 			echo "<br>";
+			$exportlogData.="\n";
+			$exportlogData.="Question " . $questiontitle . "  of questiontype ". $q . " not converted.\n";
+			$exportlogData.="\n";
+			
 		}
 	}//foreach question
+	
 	}
-	//********************************************************************************
+	
+				//********************************************************************************
+			
+		foreach ($test->section->section as $sec){
+		$selectionnumber=$sec->selection_ordering->selection->selection_number;
+		
+	foreach ($sec->selection_ordering->selection->or_selection->selection_metadata as $s) {
+//$s2=$s->selection_ordering->selection->or_selection->selection_metadata;
+$s=trim($s);
+
+$quids=str_replace("_", "", $s);
+
+		if(isset($questions_ar["$quids"]))
+		{
+	//$exportlogData.=$resdat . "Quiz " . $quids . " dfff.\n";
+		$quiz_p->setPoolQuestions($questions_ar["$quids"]);//Frage in Quiz einfügen
+		}
+		else
+		{
+			$exportlogData.="One Random question is not part of question pool.\n";
+			
+		}
+		//********************************************************
+	}//foreach
+	}	
+
+	if($selectionnumber>0)
+	{
+	
+	$aleat=true;
+	}
 	$quiz_ar2[]=$quiz_p;//Quiz in array einfügen
 	$quiz_ar_ids["$quizid"]=$quiz_p;//Quiz in array einfügen
 	//}//seltype
+	if($aleat==true)
+{
+	
+	$exportlogData.="Quiz may be empty. Questions are in the question bank. " . $quiz2_demo . " contains random questions.\n";
+}
 	}//title
 	}
+	}
+	
 }//foreach
-echo "<br>";
-echo "<br>";
-echo $zaehler . " Fragen konvertiert.";
-echo "<br>";
-echo "<br>";
+//echo "<br>";
+//echo "<br>";
+//echo $zaehler . "  questions converted.";
+$questionsnum=count($quiz_ar2);
+if(count($questionsnum)>0)
+{
+$exportlogData.="\n";
+$exportlogData.=$questionsnum . "  quizzes converted.\n";
+$exportlogData.="\n";
+$exportlogData.=$zaehler . "  questions converted.\n";
+$exportlogData.="\n";
+
+}
+
 ?>

@@ -24,6 +24,8 @@
  	var $deliverytype;
  	var $timelimit;
  	var $attemptcount;
+	 var $indent;
+	 var $available;
  	function quiz($n, $i, $c, $cat, $g, $d)
  	{
  		$this->name=$n;
@@ -35,6 +37,8 @@
  		$this->gesamtscore=$g;
  		$this->description=$d;
  		$this->section=1;
+		$this->indent=0;
+$this->available=1;
  	}
  	
  	function getName()
@@ -67,7 +71,7 @@
  			
  		$this->poolquestions[]=$q;
  	}
- 	function getPoolQuestions($q)
+ 	function getPoolQuestions()
  	{
  	
  		return $this->poolquestions;
@@ -139,6 +143,32 @@
  	{
  	
  		return $this->attemptcount;
+ 	}
+	function setAvailable($a)
+ 	{
+ 	if($a==true)
+	{
+ 		$this->available ="1";
+	}
+	else
+	{
+		$this->available ="0";
+ 	}
+	}
+	function getIndent()
+ 	{
+ 		
+ 		return $this->indent;
+ 	}
+	function setIndent($in)
+ 	{
+ 		
+ 		 $this->indent=$in;
+ 	}
+	function getAvailable()
+ 	{
+ 			
+ 		return $this->available;
  	}
  }
 ?>

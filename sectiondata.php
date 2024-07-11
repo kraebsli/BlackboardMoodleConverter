@@ -24,10 +24,11 @@ var $sectionorder;
  		$this->id=$i;
 
  		$this->title=$t;
- 			
+ 			$this->elementnumber=0;
  		$this->parentid=$p;
  		$this->othersections=array();
  		$this->sectionorder=array();
+		$this->temparray=array();
 	//$this->available=$a;
  	}
 
@@ -67,10 +68,22 @@ var $sectionorder;
 
  		$this->sectionorder[]=$s;
  	}
+	function setElementnumber($s) {
+
+ 		$this->temparray[]=$s;
+ 	}
  	function getSectionorder() {
  			
  		return $this->sectionorder;
  	}
+	function insertSectionElement($i)
+	{
+		//$this->temparray[]=$i;
+		//array_unshift($this->sectionorder, $this->temparray);
+		//array_splice($this->sectionorder, 0, count($this->temparray),$this->temparray);
+		 array_splice($this->sectionorder, $this->position, 0, $i);
+		 $this->position++;
+	}
  	function insertSection($s, $t) {
  		
  		//$this->sectionorder[]=$t;

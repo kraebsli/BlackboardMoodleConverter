@@ -30,9 +30,10 @@ foreach ($daten->resources->resource as $res) {
 
 				if(preg_match("`^.*\.(htm|html)$`", $filename)){
 					//******************
-					$indexhtmtext="<p>HTML-Dateien werden nicht uebernommen. Exportieren Sie diese aus Ihrem Blackboard-Kurs separat.</p>";
+					$indexhtmtext="<p>HTML files are not converted.</p>";
+					$exportlogData.=$indexhtmtext;
 					$arrtemp=array();
-					$labelitem= new label ($labelid, "htm", "HTML-Dateien werden nicht uebernommen.",  $section, $arrtemp, $labelid);
+					$labelitem= new label ($labelid, "htm", "HTML files are not converted.",  $section, $arrtemp, $labelid);
 					$arr_labels[]=$labelitem;
 					$labelid++;
 				}

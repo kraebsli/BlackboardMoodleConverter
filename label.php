@@ -18,7 +18,8 @@ var $desc;
 var $embedar;
 var $section;
 var $parentid;
- 	 	 	
+var $indent;
+	 var $available;	
 
  	function label($i, $t, $te, $s, $em, $p)
  	{
@@ -32,6 +33,8 @@ var $parentid;
 $this->section=$s;
 $this->embedar=$em;
 $this->parentid=$p;
+$this->indent=0;
+$this->available=1;
  	}
   function getAr()
  	{
@@ -69,6 +72,32 @@ $this->parentid=$p;
  	{
  		
  		return $this->text;
+ 	}
+	function getAvailable()
+ 	{
+ 			
+ 		return $this->available;
+ 	}
+ 	function setAvailable($a)
+ 	{
+ 	if($a==true)
+	{
+ 		$this->available ="1";
+	}
+	else
+	{
+		$this->available ="0";
+ 	}
+	}
+	function getIndent()
+ 	{
+ 		
+ 		return $this->indent;
+ 	}
+	function setIndent($in)
+ 	{
+ 		
+ 		 $this->indent=$in;
  	}
  }
 ?>

@@ -4,19 +4,33 @@
  * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
  * */
 //directories für quizzes
-
- 	 for($i=0; $i<count($quiz_ar); $i++)
+$xmlfile20='<?xml version="1.0" encoding="'.$charset.'"?>'."\n"; 
+$xmlfile20.="<inforef>";
+$xmlfile20.="<question_categoryref>";
+$quizcategoriespfad="moodle_src/course";
+ for($i=0; $i<count($quiz_ar); $i++)
 {
 	//*************************************************
 	//**************************
-	$qudefaultmark=0;
+	/*$qudefaultmark=0;
 	$quizid=$quiz_ar[$i]->getId();
 	$quizname=$quiz_ar[$i]->getName();
 	$contextid=$quiz_ar[$i]->getContextId();
 	//echo "contextid         " . $contextid . "   categoryid " . $categoryid . "<br><br>";
-	
+	*/
 	$categoryid=$quiz_ar[$i]->getCategoryId();
-	$gesamtscore=$quiz_ar[$i]->getGesamtscore();
+	 $xmlfile20.="<question_category>
+      <id>" . $categoryid . "</id>
+    </question_category>";
+	//only categories
+	//$exportlogData.= "category" . $categoryid ."\n";
+}
+
+$xmlfile20.=" </question_categoryref></inforef>";
+$file20 = fopen($quizcategoriespfad . "/inforef.xml","w");
+fwrite($file20,$xmlfile20);
+fclose($file20);
+	/*$gesamtscore=$quiz_ar[$i]->getGesamtscore();
 	$quizdescription=$quiz_ar[$i]->getDescription();
 	$quizsectionid=$quiz_ar[$i]->getSectionid();
 	$quizsectionid=$quizsectionid+$sectionstart;
@@ -94,7 +108,7 @@ for($j=0;$j<count($questions); $j++)
 {
 	$z=count($questions)-1;
 	$quid=$questions[$j]->getId();
-	$qudefaultmark=$qudefaultmark+$questions[$j]->getDefaultmark();
+	$qudefaultmark=$qudefaultmark+ (int)$questions[$j]->getDefaultmark();
 	if($j!==$z)
 	{
 		$xmlfile9.=$quid . ",";
@@ -240,18 +254,23 @@ $file12 = fopen($quizpfad . "/module.xml","w");
 fwrite($file12,$xmlfile12);
 fclose($file12);
 }
+*/
 //******************************************
 //directories für quizzes
 
 for($i=0; $i<count($quiz_ar2); $i++)
 {
+$tempquizarray=array();
 	$qudefaultmark=0;
 	//*************************************************
 	//**************************
 	$quizid=$quiz_ar2[$i]->getId();
+
 	$quizname=$quiz_ar2[$i]->getName();
 	$contextid=$quiz_ar2[$i]->getContextId();
 	$categoryid=$quiz_ar2[$i]->getCategoryId();
+	$indent=$quiz_ar2[$i]->getIndent();
+$available=$quiz_ar2[$i]->getAvailable();
 	//echo "contextid         " . $contextid . "   categoryid " . $categoryid . "<br><br>";
 	$gesamtscore=$quiz_ar2[$i]->getGesamtscore();
 	$quizdescription=$quiz_ar2[$i]->getDescription();
@@ -308,7 +327,8 @@ for($i=0; $i<count($quiz_ar2); $i++)
     <overduehandling>autosubmit</overduehandling>
     <graceperiod>0</graceperiod>
     <preferredbehaviour>deferredfeedback</preferredbehaviour>
-    <attempts_number>0</attempts_number>
+    <attempts_number>". $attemptcount ."</attempts_number>
+	<canredoquestions>0</canredoquestions>
     <attemptonlast>0</attemptonlast>
     <grademethod>1</grademethod>
     <decimalpoints>2</decimalpoints>
@@ -323,21 +343,23 @@ for($i=0; $i<count($quiz_ar2); $i++)
  <questionsperpage>" . $deliverytype . "</questionsperpage>
      <navmethod>" . $navmethod . "</navmethod>
     <shufflequestions>0</shufflequestions>
-    <shuffleanswers>1</shuffleanswers>
-    <questions>";
+    <shuffleanswers>1</shuffleanswers>";
 	$questions=$quiz_ar2[$i]->getQuestions();
 	for($j=0;$j<count($questions); $j++)
 	{
 		$z=count($questions)-1;
 		$quid=$questions[$j]->getId();
+		
+		$tempquizarray[]=$quid;
 		$qudefaultmark=$qudefaultmark+$questions[$j]->getDefaultmark();
 		if($j!==$z)
 			{
-			$xmlfile9.=$quid . ",";
+			//$xmlfile9.=$quid . ",";
+				
 	}
 	else
 		{
-		$xmlfile9.=$quid;
+		//$xmlfile9.=$quid;
 }
 }
 //***********************************************poolquestions
@@ -348,22 +370,26 @@ for($j=0;$j<count($poolquestions); $j++)
 {
 $z=count($poolquestions)-1;
 $quid=$poolquestions[$j]->getId();
+if (in_array($quid, $tempquizarray)) {
+}
+else
+{
 $qudefaultmark=$qudefaultmark+$poolquestions[$j]->getDefaultmark();
 if($j!==$z)
 {
-$xmlfile9.=$quid . ",";
+//$xmlfile9.=$quid . ",";
 }
 else
 	{
-		$xmlfile9.=$quid;
+		//$xmlfile9.=$quid;
 		}
-		}
-
 }
+		}//if for
+
+}//if count
 
 //****************************************************************
-$xmlfile9.="</questions>
-    <sumgrades>" . $gesamtscore . "</sumgrades>
+$xmlfile9.="<sumgrades>" . $gesamtscore . "</sumgrades>
     <grade>" . $gesamtscore . "</grade>
     <timecreated>0</timecreated>
     <timemodified>0</timemodified>
@@ -374,29 +400,75 @@ $xmlfile9.="</questions>
     <delay2>0</delay2>
     <showuserpicture>0</showuserpicture>
     <showblocks>0</showblocks>
+	<completionattemptsexhausted>0</completionattemptsexhausted>
+<completionpass>0</completionpass>
+<completionminattempts>0</completionminattempts>
+<allowofflineattempts>0</allowofflineattempts>
+<subplugin_quizaccess_seb_quiz> </subplugin_quizaccess_seb_quiz>
     <question_instances>";
+	$slots=1;
     for($j=0;$j<count($questions); $j++)
     {
     $quid=$questions[$j]->getId();
     $grade=$questions[$j]->getDefaultmark();
       $xmlfile9.="<question_instance id=\"" . $j . "\">
-        <question>" . $quid . "</question>
-        <grade>" . $grade . "</grade>
+  <slot>" . $slots ."</slot>
+		<page>1</page>
+<requireprevious>0</requireprevious>
+<questionid>" . $quid . "</questionid>
+<questioncategoryid>$@NULL@$</questioncategoryid>
+<includingsubcategories>$@NULL@$</includingsubcategories>
+<maxmark>" . $grade . "</maxmark>
+<tags> </tags>
       </question_instance>";
+	  $slots++;
 }
 if(count($poolquestions)>0)
 {
+	$counter=count($questions);
+	$slots=1;
 for($j=0;$j<count($poolquestions); $j++)
 {
 $quid=$poolquestions[$j]->getId();
+if (in_array($quid, $tempquizarray)) {
+}
+else
+
+{
+	$tempquizarray[]=$quid;
 $grade=$poolquestions[$j]->getDefaultmark();
-$xmlfile9.="<question_instance id=\"" . $j . "\">
-		<question>" . $quid . "</question>
-		<grade>" . $grade . "</grade>
+$countertemp=$counter+$slots;
+$slots++;
+$xmlfile9.="<question_instance id=\"" . $countertemp . "\">
+<slot>" . $countertemp ."</slot>
+<page>1</page>
+<requireprevious>0</requireprevious>
+<questionid>" . $quid . "</questionid>
+<questioncategoryid>$@NULL@$</questioncategoryid>
+<includingsubcategories>$@NULL@$</includingsubcategories>
+<maxmark>" . $grade . "</maxmark>
+<tags> </tags>
+
       </question_instance>";
 }
 }
+}
+
     $xmlfile9.="</question_instances>
+<sections>
+
+
+<section id=\"5692\">
+
+<firstslot>1</firstslot>
+
+<heading/>
+
+<shufflequestions>0</shufflequestions>
+
+</section>
+
+</sections>
     <feedbacks>
       <feedback id=\"12223\">
         <feedbacktext></feedbacktext>
@@ -489,8 +561,8 @@ $xmlfile12.="<module id=\"" . $quizid . "\" version=\"" . $quizmoduleversion . "
   <idnumber></idnumber>
   <added>0</added>
   <score>0</score>
-  <indent>0</indent>
-  <visible>1</visible>
+  <indent>" . $indent . "</indent>
+  <visible>" . $available . "</visible>
   <visibleold>1</visibleold>
   <groupmode>0</groupmode>
   <groupingid>0</groupingid>

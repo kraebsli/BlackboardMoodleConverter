@@ -2,7 +2,7 @@
 
 /* @copyright  Kathrin Braungardt, Ruhr-Universität Bochum
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-* makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
+
 * */
 $coursefullname="";
  $courseshortname="";
@@ -27,6 +27,6 @@ $moodleversion="2014111003.03";
 $moodlerelease="2.8.3+ (Build: 20150219)";
 $backupversion="2014111000";
 $backuprelease="2.8";
-$original_wwwroot="https://yourinstitution.com";
+$original_wwwroot="yourinstitution.xyz+";
 $moodleidentifier="yourinstitution.xyz+";
 ?>

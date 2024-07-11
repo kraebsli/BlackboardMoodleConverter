@@ -11,9 +11,9 @@ $matchid++;
 $fragen=array();
 $antworten=array();
 $scorevalue="";
-echo "<br>";
-echo $quiz2_demo;
-echo "<br>";
+//echo "<br>";
+//echo $quiz2_demo;
+//echo "<br>";
 //***************************Frageninhalte
 foreach ($question->presentation->flow->flow as $flow) {
 	if($flow['class']=="QUESTION_BLOCK")//Fragetext
@@ -98,17 +98,17 @@ for($i=0; $i<count($fragen); $i++)
 			$antwortid++;
 			$antwort=new answer ($antwortid, $antworttext, $feedback, $richtigeantwort, $scorevalue);
 			$answer_ar[]=$antwort;
-			echo "korr: " . $fragen[$i] . ": " . $antworten[$k];
-			echo "&nbsp;&nbsp;&nbsp;";
-			echo "<select name=\"" . $zahlmatches . "\">";
+			//echo "korr: " . $fragen[$i] . ": " . $antworten[$k];
+			//echo "&nbsp;&nbsp;&nbsp;";
+			//echo "<select name=\"" . $zahlmatches . "\">";
 			//**************************************************************
 			for($m=0; $m<count($antworten); $m++)
 			{
 			if($_POST[$zahlmatches]==$quidents[$m])
 			{
-			echo "<option value=\"" .  $quidents[$m] .  "\"selected>";
-					echo $feedback;
-					echo "</option>";
+			//echo "<option value=\"" .  $quidents[$m] .  "\"selected>";
+					//echo $feedback;
+					//echo "</option>";
 			}
 			}
 			for($m=0; $m<count($antworten); $m++)
@@ -119,9 +119,9 @@ for($i=0; $i<count($fragen); $i++)
 			}
 			else
 			{
-			echo "<option value=\"" .  $quidents[$m] .  "\">";
-					echo $antworten[$m];
-							echo "</option>";
+			//echo "<option value=\"" .  $quidents[$m] .  "\">";
+					//echo $antworten[$m];
+							//echo "</option>";
 			}
 			}
 							//*************************************************
@@ -129,8 +129,8 @@ for($i=0; $i<count($fragen); $i++)
 		
 	}
    
-					echo "</select>";
-					echo "<br>";
+					//echo "</select>";
+					//echo "<br>";
 					$_POST[$zahlmatches]="";
 	}
 	else 
@@ -144,16 +144,16 @@ for($i=0; $i<count($fragen); $i++)
 		$antwortid++;
 		$antwort=new answer ($antwortid, $antworttext, $feedback, $richtigeantwort, $scorevalue);
 		$answer_ar[]=$antwort;
-		echo $fragen[$i] . ": " . $antworten[$i];
-		echo "&nbsp;&nbsp;&nbsp;";
-		echo "<select name=\"" . $zahlmatches . "\">";
+		//echo $fragen[$i] . ": " . $antworten[$i];
+		//echo "&nbsp;&nbsp;&nbsp;";
+		//echo "<select name=\"" . $zahlmatches . "\">";
 		for($m=0; $m<count($antworten); $m++)
 		{
 			if($antworten[$i]==$antworten[$m])
 			{
-				echo "<option value=\"" .  $quidents[$m] .  "\"selected>";
-				echo $antworten[$m];
-				echo "</option>";
+				//echo "<option value=\"" .  $quidents[$m] .  "\"selected>";
+				//echo $antworten[$m];
+				//echo "</option>";
 			}
 		}
 		for($m=0; $m<count($antworten); $m++)
@@ -164,15 +164,15 @@ for($i=0; $i<count($fragen); $i++)
 		}
 		else 
 		{
-			echo "<option value=\"" .  $quidents[$m] .  "\">";
-			echo $antworten[$m];
-			echo "</option>";
+			//echo "<option value=\"" .  $quidents[$m] .  "\">";
+			//echo $antworten[$m];
+			//echo "</option>";
 		}
 		}
 		
 		
-		echo "</select>";
-		echo "<br>";
+		//echo "</select>";
+		//echo "<br>";
 		
 	}
 	$zahlmatches++;

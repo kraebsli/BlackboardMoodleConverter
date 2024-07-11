@@ -83,9 +83,14 @@ $zaehler++;
 						
 						//*********************************************************************************
 						$antworttext= $resp->response_label->flow_mat->material->mat_extension->mat_formattedtext;
+
+	
 						//antworttext nach IMG parsen************************************************************
 						$filearea="answer";
+						
 						$antworttext2=bild2($antworttext, $dir, $antwortid, $resident, $direxport, $contextid, $filearea);//array mit img-infos
+						
+						
 						//das muss bei moodle stehen: ><img src="@@PLUGINFILE@@/tab2.jpg" width="300" height="200" /
 						
 						if(isset($antworttext2[1]) && $antworttext2!=="")
@@ -99,7 +104,7 @@ $zaehler++;
 								$arr_files_embedded_quiz[]=$arrmitembeddedfiles[$i];
 						}
 						$antworttext=$antworttext2[1];
-						$antworttext=strip_tags($antworttext);
+						//$antworttext=strip_tags($antworttext);
 						$antworttext=xmlencoding($antworttext);
 			
 						}

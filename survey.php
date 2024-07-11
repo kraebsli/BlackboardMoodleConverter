@@ -18,7 +18,8 @@
  	var $contextid;
 var $description;
 var $section;
-
+ var $indent;
+	 var $available;
  	function survey($n, $i, $c, $d)
  	{
  		
@@ -30,6 +31,8 @@ var $section;
 
  		$this->description=$d;
  		$this->section=$s;
+		$this->indent=0;
+$this->available=1;
  	}
  	
  	function getName()
@@ -81,6 +84,39 @@ var $section;
  	
  			return $this->section;
  	}
- 	
+	function updateDescription($ud)
+ 	{
+ 			
+ 		 $this->description=$ud . "<br><br>" . $this->description;
+ 		 $this->description= xmlencoding($this->description);
+ 		// echo $this->name . "<br>" . $this->description . "<br>";
+ 
+ 	}
+	function setAvailable($a)
+ 	{
+ 	if($a==true)
+	{
+ 		$this->available ="1";
+	}
+	else
+	{
+		$this->available ="0";
+ 	}
+	}
+ 	function getIndent()
+ 	{
+ 		
+ 		return $this->indent;
+ 	}
+	function setIndent($in)
+ 	{
+ 		
+ 		 $this->indent=$in;
+ 	}
+	function getAvailable()
+ 	{
+ 			
+ 		return $this->available;
+ 	}
  }
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* @copyright  Kathrin Braungardt, Ruhr-Universität Bochum
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
+
  * */
 
 if ($_POST['nochmal']=="1")
@@ -14,7 +14,7 @@ if ($_POST['nochmal']=="1")
 }
 else 
 {
-require_once('pclzip.lib.php');
+
 $dateiname=  $_FILES['bbzipfile']['name'];
 $uploadfile = "uploads/" . basename($_FILES['bbzipfile']['name']);
 //wird nach exportieren gelöscht
@@ -22,7 +22,7 @@ $uploadfile = "uploads/" . basename($_FILES['bbzipfile']['name']);
 //echo "Dateiname: " . $_FILES['bbzipfile']['name'];
 //echo "<br>";
 $dateiname2= explode(".", $dateiname);
-$neuerpfad=$dateiname2[0];
+$neuerpfad="uploads/" . $dateiname2[0];
 if(is_dir($neuerpfad))
 {
 
@@ -47,7 +47,22 @@ echo "<br>";
 //*********************************************
 //*****************************************************
 $destination_dir= $uploaddir .  $neuerpfad;
-$archive = new PclZip($uploadfile);
+$zip = new ZipArchive;
+$res = $zip->open($uploadfile);
+if ($res === TRUE) {
+   
+    $zip->extractTo($destination_dir);
+    $zip->close();
+parse($neuerpfad, $neuerpfadexport, $uploadfile, $dateiname, $stamp, $version, $modus1);
+} 
+else {
+		$myFile = "logs_notok/".basename($file, ".zip"). ".log";
+	$fh = fopen($myFile, 'w') or die("can't open file");
+$message="Unzip could not be done." . $res;
+fwrite($fh, $message);
+fclose($fh);
+}
+/*$archive = new PclZip($uploadfile);
 if ($archive->extract(PCLZIP_OPT_PATH, $destination_dir) == 0) {
 	die("Unzip failed. Error : ".$archive->errorInfo(true));
 }
@@ -55,7 +70,7 @@ else
 {
 	// echo "Successfully extracted files to ".$destination_dir;
 	parse($neuerpfad, $neuerpfadexport, $uploadfile, $dateiname, $stamp, $version, $modus1);
-}
+}*/
 }
 //**************************************************
 ?>

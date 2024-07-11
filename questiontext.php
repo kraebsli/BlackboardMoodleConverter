@@ -73,7 +73,7 @@ if($questiontitle=="")
 	}
 
 //*****************************************
-if($dateibeifrage2[1]!=="")
+if(isset($dateibeifrage2[1])&& $dateibeifrage2[1]!=="")
 {
 $qt = $qt . "   " . $dateibeifrage2[1];
 $qt=xmlencoding($qt);

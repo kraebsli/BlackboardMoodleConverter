@@ -17,7 +17,8 @@ var $text2;
 var $desc;
 var $embedar;
 var $section;
- 	 	 	
+ 	 	  var $indent;
+	 var $available;	
 
  	function page($i, $t, $te, $d, $em, $s)
  	{
@@ -29,6 +30,8 @@ var $section;
  		$this->text2=$te;
  		$this->embedar=$em;
 $this->section=$s;
+$this->indent=0;
+$this->available=1;
  	}
   function getAr()
  	{
@@ -80,5 +83,31 @@ $this->section=$s;
  	
  	
  		}
+		function getAvailable()
+ 	{
+ 			
+ 		return $this->available;
+ 	}
+ 	function setAvailable($a)
+ 	{
+ 	if($a==true)
+	{
+ 		$this->available ="1";
+	}
+	else
+	{
+		$this->available ="0";
+ 	}
+	}
+	function getIndent()
+ 	{
+ 		
+ 		return $this->indent;
+ 	}
+	function setIndent($in)
+ 	{
+ 		
+ 		 $this->indent=$in;
+ 	}
  }
 ?>

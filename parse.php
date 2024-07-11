@@ -4,10 +4,10 @@
  *
  * @copyright  Kathrin Braungardt, Ruhr-Universität Bochum
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
+ 
  * */
 $modus1= $_POST['var'];
-@ini_set("memory_limit",'8232M');
+//@ini_set("memory_limit",'8232M');
 set_time_limit (0);
 include("uploaddir.php");
 include("functions.php");
@@ -24,22 +24,26 @@ include("unzip.php");
  	echo "<input type=\"hidden\" name=\"uploadfile\" value=\"" . $ulf . "\">";
  	echo "<input type=\"hidden\" name=\"dateiname\" value=\"" . $d . "\">";
  	echo "<input type=\"hidden\" name=\"modus1\" value=\"" . $modus . "\">";*/
+ 
+ 	rmr("exportlog.txt");
  	
- 	
+	$exportlogData="";
+$modus="multiplefolders";
+
 include("config.php");
-include("folder.php");
-include("file.php");
-include("fileembedded.php");
-include("fileembedded_quiz.php");
-include("fileembedded_quiz_drag.php");
-include("page.php");
-include("wiki.php");
-include("wikipage.php");
-include("label.php");
-include("link.php");
-include("survey.php");
-include("sectiondata.php");
-include("regex.php");
+include_once("folder.php");
+include_once("file.php");
+include_once("fileembedded.php");
+include_once("fileembedded_quiz.php");
+include_once("fileembedded_quiz_drag.php");
+include_once("page.php");
+include_once("wiki.php");
+include_once("wikipage.php");
+include_once("label.php");
+include_once("link.php");
+include_once("survey.php");
+include_once("sectiondata.php");
+include_once("regex.php");
 //*******************************************************************************
 include("manifest-bb-data.php");
 
@@ -51,13 +55,19 @@ if($iter==true){
 //***********************************************************
 $datfiletitle= $dir . "/res00001.dat"; //title
 $res_title=simplexml_load_file($datfiletitle);
-$title=$res_title->LABEL;
+$title=$res_title->TITLE;
 $title=$title['value'];
+	//Shortname
+	$shortname=$res_title->COURSEID;
+	$shortname=$shortname['value'];
+	//$exportlogData.= $aktuellesdatum ."\n";
+$exportlogData.= $title ."\n";
 if($title!="")
 {
 	$coursetitle=$title;
-	$courseshortname=$coursetitle;
+	$courseshortname=$shortname;
 	$coursecontextid=$original_course_contextid;
+
 }
 else
 {
@@ -65,14 +75,15 @@ else
 	$coursetitle=$neuerpfad;
 	$courseshortname=$coursetitle;
 }
+//***************************************************
 include("banner.php");
-//include("files-bb-data.php");
+//include_once("files-bb-data.php");
 
 //******************************************************
 //***********************************************Questions
  include("questions.php");
  include("questions2.php");
- include ("surveyitems.php");
+ include("surveyitems.php");
 //*********************************************************
  include("pages-links-bb-data.php");
 include("quiz_options.php");
@@ -83,9 +94,10 @@ $filenumber= count($arr_files);
 
 	
 include("moodle-backup.php");
- 
-        
-include("files.php");
+ $exportlogData.= "You  get " . $sectionzaehler . " sections in Moodle with this course and " . $filenumber . " files.\n";
+
+     
+
 //ACTIVITIES****************************************************************
 //***********************directories für activities*************************
 mkdir($direxport . "/activities", 0700);
@@ -116,6 +128,7 @@ include("link_xml.php");
 include("label_xml.php");
 include("survey_xml.php");
 //******************************
+
 //Sections
 //recurse_copy("moodle_src/sections",$direxport . "/sections");
 include("section.php");
@@ -129,10 +142,18 @@ recurse_copy("moodle_src/course",$direxport . "/course");
    
   copy("moodle_src/roles.xml",$direxport . "/roles.xml");
   copy("moodle_src/scales.xml",$direxport . "/scales.xml");
+  copy("moodle_src/users.xml",$direxport . "/users.xml" );
  //***********************************************************
- echo "<br>";
-echo "you will get " . $sectionzaehler . " sections in Moodle with this course and " . $allfiles . " files.";
+ //echo "<br>";
+//echo "you will get " . $sectionzaehler . " sections in Moodle with this course and " . $allfiles . " files.";
+include("files.php");
+include("logdata.php"); 
+include("activity-resource-log.php");  
 include("zip.php");
+//**************************************
+
+
+//*****************************************************
 /*echo "<br>";
 echo "<br>";
 echo "<br>";
@@ -142,6 +163,9 @@ echo "<br>";
 echo "<br>";
 echo "<INPUT TYPE=\"submit\" name=\"submit\" />";
 echo "</form>";*/
+//**************************************
+
+
    }//ende function parse
    
    //**************************************************

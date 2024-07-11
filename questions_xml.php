@@ -118,8 +118,8 @@ for($i=0; $i<count($quiz_ar2); $i++)
 	$quizid=$quiz_ar2[$i]->getId();
 	$categoryname=$quiz_ar2[$i]->getName();
 	$categoryid=$quiz_ar2[$i]->getCategoryId();
-	echo "ssss" . $i;
-	echo "<br>";
+	//echo "ssss" . $i;
+	//echo "<br>";
 	$contextid=$quiz_ar2[$i]->getContextId();
 	$quizdescription=$quiz_ar2[$i]->getDescription();
 	$xmlfileques.="<question_category id=\"" . $categoryid . "\">
