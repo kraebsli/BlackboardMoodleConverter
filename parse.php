@@ -13,7 +13,8 @@ set_time_limit (0);
 error_reporting(E_ALL & ~E_NOTICE);
 include("uploaddir.php");
 include("functions.php");
-$bigfiles=true;
+
+$bigfiles=false;
 
 if($bigfiles==false)
 {
@@ -25,11 +26,28 @@ else{
 		$file = basename($argv[1]);
 		register_shutdown_function('shutdownFunction', $file);
 }
+//$manifest = "uploads/unzip/" . $file2 ."/imsmanifest.xml"; //directory
+/*$daten2 = simplexml_load_file($manifest, "SimpleXMLIterator");//run through all .dat files
+$sxi = new RecursiveIteratorIterator(
+		$daten2,
+		RecursiveIteratorIterator::SELF_FIRST);
+
+$assess=false;
+foreach($sxi as $resource) {
+	if($resource['type']=="assessment/x-bb-qti-pool" || $resource['type']=="assessment/x-bb-qti-test")
+	{
+		$assess=true;
+	break;
+	
+	}
+}*/
+		
 
 //echo "<h1>Convert BB TO MOODLE - no way back</h1>";
 //echo "<br>";
 
 include_once("unzip.php");
+
 //*****************************************************************
  function parse($dir, $direxport, $ulf, $d, $stamp, $version, $modus)
  {
@@ -165,7 +183,6 @@ include("zip.php");
 //**************************************
 
 
-
 //*****************************************************
 /*echo "<br>";
 echo "<br>";
@@ -176,6 +193,9 @@ echo "<br>";
 echo "<br>";
 echo "<INPUT TYPE=\"submit\" name=\"submit\" />";
 echo "</form>";*/
+//**************************************
+
+
    }//ende function parse
    
    //**************************************************

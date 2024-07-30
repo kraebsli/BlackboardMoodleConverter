@@ -465,7 +465,7 @@ foreach ($daten->resources->resource as $res) {
 			{
 			if($mod_label==false)
 			{
-					$exportlogData.= "embedded" .$i ."\n";
+					//$exportlogData.= "embedded" .$i ."\n";
 			$arr_files_embedded[]=$arrmitembeddedfiles[$i];
 			$arr_all[]=$arrmitembeddedfiles[$i];
 			}

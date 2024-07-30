@@ -27,6 +27,6 @@ $moodleversion="2014111003.03";
 $moodlerelease="2.8.3+ (Build: 20150219)";
 $backupversion="2014111000";
 $backuprelease="2.8";
-$original_wwwroot="wwwroot";
+$original_wwwroot="https://dauphine-demo.edunao.com";
 $moodleidentifier="yourinstitution.xyz+";
 ?>

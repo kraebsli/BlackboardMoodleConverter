@@ -308,6 +308,6 @@ foreach ($question->itemfeedback as $itemfeedback) {//feedback
 //echo "Fragentyp: " . $questiontype;
 $ques= new question($questiontype, $frageimSatz);
 $ques->match($qt,$df, $quid, $matchid,  $answer_ar, $questiontitle, $correctfeedback, $incorrectfeedback);
-echo "****************";
-echo "<br>";
+//echo "****************";
+//echo "<br>";
 ?>

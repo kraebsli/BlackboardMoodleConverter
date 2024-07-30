@@ -8,8 +8,8 @@ $xmlfile20='<?xml version="1.0" encoding="'.$charset.'"?>'."\n";
 $xmlfile20.="<inforef>";
 $xmlfile20.="<question_categoryref>";
 $quizcategoriespfad="moodle_src/course";
- //for($i=0; $i<count($quiz_ar2); $i++)
-//{
+ for($i=0; $i<count($quiz_ar); $i++)
+{
 	//*************************************************
 	//**************************
 	/*$qudefaultmark=0;
@@ -18,17 +18,18 @@ $quizcategoriespfad="moodle_src/course";
 	$contextid=$quiz_ar[$i]->getContextId();
 	//echo "contextid         " . $contextid . "   categoryid " . $categoryid . "<br><br>";
 	*/
-	//$categoryid=$quiz_ar2[$i]->getCategoryId();
-	// $xmlfile20.="<question_category><id>" . $categoryid . "</id></question_category>";
+	$categoryid=$quiz_ar[$i]->getCategoryId();
+	 $xmlfile20.="<question_category>
+      <id>" . $categoryid . "</id>
+    </question_category>";
 	//only categories
 	//$exportlogData.= "category" . $categoryid ."\n";
-//}
+}
 
-//$xmlfile20.=" </question_categoryref></inforef>";
-//$file20 = fopen($quizcategoriespfad . "/inforef.xml","w");
-//fwrite($file20,$xmlfile20);
-//fclose($file20);
-
+$xmlfile20.=" </question_categoryref></inforef>";
+$file20 = fopen($quizcategoriespfad . "/inforef.xml","w");
+fwrite($file20,$xmlfile20);
+fclose($file20);
 	/*$gesamtscore=$quiz_ar[$i]->getGesamtscore();
 	$quizdescription=$quiz_ar[$i]->getDescription();
 	$quizsectionid=$quiz_ar[$i]->getSectionid();

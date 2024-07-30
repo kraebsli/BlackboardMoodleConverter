@@ -80,17 +80,17 @@ foreach ($question->resprocessing->respcondition as $l) {
 					$cfeedback[]=$correctfeedback;
 					
 					$subfrage.="#" . $correctfeedback;
-					echo "pro Item korrekt: " . $correctfeedback;
-					echo "<br>";
-					echo "<br>";
+					//echo "pro Item korrekt: " . $correctfeedback;
+					//echo "<br>";
+					//echo "<br>";
 				}
 				elseif($abgleich2==$ifb)
 				{
 					$incorrectfeedback=$itemfeedback->flow_mat->flow_mat->material->mat_extension->mat_formattedtext;
 					$incorrectfeedback=xmlencoding($incorrectfeedback);
 					$incfeedback[]=$incorrectfeedback;
-					echo "pro Item inkorrekt: " . $incorrectfeedback;
-					echo "<br>";
+					//echo "pro Item inkorrekt: " . $incorrectfeedback;
+					//echo "<br>";
 				}
 			}
 				
@@ -130,17 +130,17 @@ foreach ($question->itemfeedback as $itemfeedback) {//feedback
 		//echo $correctfeedback . "corrallg<br>";
 		$correctfeedback=str_replace("Richtig.", "Richtig ist: ", $correctfeedback);
 		$correctfeedback=xmlencoding($correctfeedback);
-		echo "Gesamt korrekt: " . $correctfeedback;
-		echo "<br>";
-		echo "<br>";
+		//echo "Gesamt korrekt: " . $correctfeedback;
+		//echo "<br>";
+		//echo "<br>";
 	}
 	else if($ifb=="incorrect" && $incorrectfeedback=="")
 	{
 		$incorrectfeedback=$itemfeedback->flow_mat->flow_mat->material->mat_extension->mat_formattedtext;
 		$incorrectfeedback=xmlencoding($incorrectfeedback);
-		echo "Gesamt nicht korrekt: " . $incorrectfeedback;
-		echo "<br>";
-		echo "<br>";
+		//echo "Gesamt nicht korrekt: " . $incorrectfeedback;
+		//echo "<br>";
+		//echo "<br>";
 		//echo $incorrectfeedback . "incorrallg<br>";
 	}
 		

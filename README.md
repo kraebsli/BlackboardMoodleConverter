@@ -12,13 +12,18 @@ All question types are converted except for: Calculated Formula, Quiz Bowl.
 In Blackboard:
 Control Panel -> Packages and Utilities -> Export/Archive Course -> Export Package
 
+
+
 Installation:
 
 Put all files in one directory of the webserver. This directory should be writeable by the webserver.
 
-Make directory “uploads”,should be writeable by the webserver.
+Make directory “uploads”. In uploads you copy the Blackboard zip files.
+Make directory “unzip” inside uploads. In the directory "unzip" are extracted the Blackboard zip files.
 
-Make directory “exports” einrichten, should be writeable by the webserver.
+Make directory “exports” .
+
+Make directory logs_notok. If there are errors they get written to this directory.
 
 Make directory “activities_src” with files grades.xml, inforef.xml, roles.xml
 
@@ -28,4 +33,6 @@ and files gradebook.xml, groups.xml, outcomes.xml, roles.xml, scales.xml
 2 section directories: section_1, section_2
 
 
-start file for terminal version: parse.php
+
+
+start file: batch.sh
