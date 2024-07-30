@@ -14,18 +14,17 @@ Control Panel -> Packages and Utilities -> Export/Archive Course -> Export Packa
 
 Installation:
 
-Put all files in one directory of the webserver. This directory should be writeable by the webserver.
+Put all files in one directory of the server. This version converts files one by one.
 
-Make directory “uploads”,should be writeable by the webserver.
+Make directory “uploads”.
 
-Make directory “exports” einrichten, should be writeable by the webserver.
+Make directory “exports”.
 
 Make directory “activities_src” with files grades.xml, inforef.xml, roles.xml
-
 
 Make directory “moodle_src” einrichten, with directories course, sections 
 and files gradebook.xml, groups.xml, outcomes.xml, roles.xml, scales.xml
 2 section directories: section_1, section_2
 
 
-start file for terminal version: parse.php
+Start file for terminal version: php parse.php
