@@ -13,23 +13,23 @@
 <title>Blackboard-Moodle-Converter</title>
 </head> 
 <body>
-<h2>Blackboard->Moodle Converter 3.1 </h2>
+<h2>Blackboard->Moodle Converter 3.1 BETA</h2>
 <h3>Export and convert Blackboard courses</h3>
-
-<p>Target: Moodle 3.11</p>
+<p>Source: Blackboard 9.1 SP 14</p>
+<p>Target: Moodle 3.1.1</p>
 <p>Converted are documents, content from text elements, links, YouTube mashups and tests.</p>
 <p>All question types are converted except for: Calculated Formula, Quiz Bowl.</p>
-
+<p>Details for the question types (in German): <a href="fragetypen.pdf">Question types - PDF</a></p>
 <p>In Blackboard:<br>Control Panel -> Packages and Utilities -> Export/Archive Course -> Export Package</p>
 
 <br></br>
-<p>1) Upload Blackboard zip file:</p>
+<p>1) Upload Blackboard zip file (folders are converted to sections):</p>
 <form enctype="multipart/form-data" action="parse.php" method="POST">
 
     <input name="bbzipfile" type="file" />
      <input type='hidden' name='var' value="multiplefolders"/> 
     <br><input type="submit" value="Upload file" />
 </form>
-<p>Last update: 26.05.2021</p>
+<p>Last update: 1.3.2021, Kathrin Braungardt, info@k-braungardt.de</p>
 </body>
 </html>

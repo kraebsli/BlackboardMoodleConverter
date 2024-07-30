@@ -3,8 +3,11 @@ Blackboard-Moodle-Converter
 
 @copyright  Kathrin Braungardt, Ruhr-Universität Bochum
 @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
 
-This is a course converter which converts Blackboard courses to Moodle courses.
+Source: Blackboard 9.1 SP 14
+
+Target: Moodle 3.1.1
 
 Converted are documents, content from text elements, links, YouTube mashups and tests.
 
@@ -17,40 +20,22 @@ Control Panel -> Packages and Utilities -> Export/Archive Course -> Export Packa
 
 Installation:
 
-Put all files in one directory of the webserver. 
+Put all files in one directory of the webserver. This directory should be writeable by the webserver.
 
-Define variable downloadlink in uploaddir.php
+Define variables uploaddir und downloadlink in uploaddir.php
 
 Make directory “uploads”,should be writeable by the webserver.
 
 Make directory “exports” einrichten, should be writeable by the webserver.
 
-Make main directory writeable.
-
-Make directory “moodle_src”, with directories course, sections 
-and files gradebook.xml, groups.xml, outcomes.xml, roles.xml, scales.xml
-2 section directories: section_1, section_2
-
 Make directory “activities_src” with files grades.xml, inforef.xml, roles.xml
 
 
-Start file: upload.php
+Make directory “moodle_src” einrichten, with directories course, sections 
+and files gradebook.xml, groups.xml, outcomes.xml, roles.xml, scales.xml
+2 section directories: section_1, section_2
 
-*************************************
-File structure in Blackboard and Moodle
+Install files of PhpConcept Library - Zip Module 2.8
 
-Blackboard Export Files Structure
 
-.dat files / res folder
-ims.manifest.xml
-Folder csfiles/home_dir
-
-Blackboard stores each item or the description in a separate XML file (extension .dat).
-
-Moodle structure
-
-Central XML files: files.xml, questions.xml, moodle_backup.xml
-activities folder: contains all activities in folders
-sections folder: contains all sections in folders
-Folder files: contains all files in folders
-
+start file: upload.php

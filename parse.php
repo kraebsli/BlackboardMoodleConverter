@@ -4,16 +4,32 @@
  *
  * @copyright  Kathrin Braungardt, Ruhr-Universität Bochum
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- 
+ * makes use of  PhpConcept Library - Zip Module 2.8, License GNU/LGPL - Vincent Blavet - March 2006, http://www.phpconcept.net
  * */
-$modus1= $_POST['var'];
+//$modus1= $_POST['var'];
+
 //@ini_set("memory_limit",'8232M');
 set_time_limit (0);
+error_reporting(E_ALL & ~E_NOTICE);
 include("uploaddir.php");
 include("functions.php");
-echo "<h1>Convert BB TO MOODLE - no way back</h1>";
-echo "<br>";
-include("unzip.php");
+$bigfiles=true;
+
+if($bigfiles==false)
+{
+$file = $argv[1];
+$file2=basename($file, ".zip");
+register_shutdown_function('shutdownFunction', $file2);
+}
+else{
+		$file = basename($argv[1]);
+		register_shutdown_function('shutdownFunction', $file);
+}
+
+//echo "<h1>Convert BB TO MOODLE - no way back</h1>";
+//echo "<br>";
+
+include_once("unzip.php");
 //*****************************************************************
  function parse($dir, $direxport, $ulf, $d, $stamp, $version, $modus)
  {
@@ -24,12 +40,8 @@ include("unzip.php");
  	echo "<input type=\"hidden\" name=\"uploadfile\" value=\"" . $ulf . "\">";
  	echo "<input type=\"hidden\" name=\"dateiname\" value=\"" . $d . "\">";
  	echo "<input type=\"hidden\" name=\"modus1\" value=\"" . $modus . "\">";*/
- 
- 	rmr("exportlog.txt");
  	
-	$exportlogData="";
-$modus="multiplefolders";
-
+ 	$modus="multiplefolders";
 include("config.php");
 include_once("folder.php");
 include_once("file.php");
@@ -153,6 +165,7 @@ include("zip.php");
 //**************************************
 
 
+
 //*****************************************************
 /*echo "<br>";
 echo "<br>";
@@ -163,9 +176,6 @@ echo "<br>";
 echo "<br>";
 echo "<INPUT TYPE=\"submit\" name=\"submit\" />";
 echo "</form>";*/
-//**************************************
-
-
    }//ende function parse
    
    //**************************************************

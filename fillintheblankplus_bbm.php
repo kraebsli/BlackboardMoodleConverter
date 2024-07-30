@@ -80,17 +80,17 @@ foreach ($question->resprocessing->respcondition as $l) {
 					$cfeedback[]=$correctfeedback;
 					
 					$subfrage.="#" . $correctfeedback;
-					//echo "pro Item korrekt: " . $correctfeedback;
-					//echo "<br>";
-					//echo "<br>";
+					echo "pro Item korrekt: " . $correctfeedback;
+					echo "<br>";
+					echo "<br>";
 				}
 				elseif($abgleich2==$ifb)
 				{
 					$incorrectfeedback=$itemfeedback->flow_mat->flow_mat->material->mat_extension->mat_formattedtext;
 					$incorrectfeedback=xmlencoding($incorrectfeedback);
 					$incfeedback[]=$incorrectfeedback;
-					//echo "pro Item inkorrekt: " . $incorrectfeedback;
-					//echo "<br>";
+					echo "pro Item inkorrekt: " . $incorrectfeedback;
+					echo "<br>";
 				}
 			}
 				
